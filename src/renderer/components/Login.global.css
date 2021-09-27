@@ -1,0 +1,34 @@
+.login {
+  display: flex;
+  flex-grow: 100;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  margin-bottom: 5em;
+}
+
+#field {
+  font-size: 25px;
+  margin-bottom: 10px;
+  max-width: 500px;
+  height: 75px;
+  width: 100%;
+}
+
+.login-button {
+  min-width: 500px;
+  min-height: 50px;
+  background-color: #550c18;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: 'Raleway', sans-serif;
+}
