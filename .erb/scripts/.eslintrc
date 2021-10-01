@@ -3,6 +3,10 @@
     "no-console": "off",
     "global-require": "off",
     "import/no-dynamic-require": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "no-restricted-syntax": "off",
+    "promise/always-return": "off",
+    "promise/catch-or-return": "off",
+    "react-hooks/exhaustive-deps": "off"
   }
 }
