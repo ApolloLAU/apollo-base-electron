@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState } from 'react';
 import { useHistory } from 'react-router';
 import icon from '../../../assets/FRSLogo.png';
 import './Login.global.css';
-import API from '../api/API';
+import { API } from '../api/API';
 
 export default function Login() {
   const history = useHistory();
@@ -24,18 +24,19 @@ export default function Login() {
     setLoginEnabled(false);
     API.login(email, password)
       .then((user) => {
-        console.log(user);
+        console.log('User Logged In');
         return API.getRoleForUser(user);
       })
       .then((role) => {
         if (role === 'field_worker') {
           // todo: show role error
         } else if (role === 'base_worker') {
+          setLoginEnabled(true);
           history.push('/main/mission');
         } else {
+          setLoginEnabled(true);
           history.push('/main/team');
         }
-        setLoginEnabled(true);
       })
       .catch((error) => {
         console.log(error);

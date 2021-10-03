@@ -3,7 +3,7 @@ import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 
 import './App.global.css';
 import Login from './components/Login';
-import API from './api/API';
+import { API } from './api/API';
 import MainScreen from './components/MainScreen';
 
 export default function App() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import API from '../api/API';
+import { API } from '../api/API';
 
 type NavigationMenuProps = {
   role: string;

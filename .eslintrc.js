@@ -8,6 +8,8 @@ module.exports = {
     'promise/always-return': 'off',
     'promise/catch-or-return': 'off',
     'react-hooks/exhaustive-deps': 'off',
+    'max-classes-per-file': 'off',
+    'no-plusplus': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

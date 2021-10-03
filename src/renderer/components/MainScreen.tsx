@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 import NavigationMenu from './NavigationMenu';
-import API from '../api/API';
+import { API } from '../api/API';
+import TeamScreen from './TeamScreen';
+import OperatorScreen from './OperatorScreen';
 
 export default function MainScreen() {
   const history = useHistory();
@@ -19,6 +22,10 @@ export default function MainScreen() {
   return (
     <div>
       <NavigationMenu role={role} />
+      <Switch>
+        <Route path="/main/team/:id" component={OperatorScreen} />
+        <Route path="/main/team" component={TeamScreen} />
+      </Switch>
     </div>
   );
 }
