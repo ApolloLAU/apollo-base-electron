@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FRSWorker } from '../api/API';
+import { MWorker } from '../api/API';
 import OperatorCard from './OperatorCard';
 
 export default function TeamScreen() {
@@ -7,11 +7,11 @@ export default function TeamScreen() {
   const [fieldWorkers, setFieldWorkers] = useState([]);
 
   useEffect(() => {
-    FRSWorker.getBaseWorkers().then((bWorkers) => {
+    MWorker.getBaseWorkers().then((bWorkers) => {
       console.log('base workers:');
       setBaseWorkers(bWorkers);
     });
-    FRSWorker.getFieldWorkers().then((fWorkers) => {
+    MWorker.getFieldWorkers().then((fWorkers) => {
       console.log('field workers:');
       setFieldWorkers(fWorkers);
     });

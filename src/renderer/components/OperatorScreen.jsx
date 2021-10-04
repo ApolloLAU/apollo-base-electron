@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FRSWorker } from '../api/API';
+import { MWorker } from '../api/API';
 
 export default function OperatorScreen() {
   const { id } = useParams();
@@ -14,7 +14,7 @@ export default function OperatorScreen() {
   const [photoURL, setPhotoURL] = useState('');
 
   useEffect(() => {
-    FRSWorker.getById(id)
+    MWorker.getById(id)
       .then((worker) => {
         // todo: check if currently logged in user => can edit their own info.
         setFirstName(worker.getFirstName());

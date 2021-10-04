@@ -16,7 +16,7 @@ body {
   height: 100%;
   background: white;
   font-family: 'Raleway', sans-serif;
-  overflow-y: hidden;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: center;

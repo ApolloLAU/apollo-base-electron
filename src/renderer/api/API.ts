@@ -2,12 +2,106 @@
 // @ts-ignore
 import { Parse } from 'parse';
 
-class FRSWorker extends Parse.Object {
+class MedicalDataPt extends Parse.Object {
+  constructor() {
+    super('MedicalData');
+  }
+
+  getDataType(): string {
+    return this.get('datatype');
+  }
+
+  getDataValue(): string {
+    return this.get('value');
+  }
+
+  getRelatedMission(): Mission {
+    return this.get('mission_record');
+  }
+
+  static async getMedicalDataForMission(
+    missionId: string
+  ): Promise<Array<MedicalDataPt>> {
+    return new Parse.Query(MedicalDataPt)
+      .equalTo('mission_record', missionId)
+      .limit(10000) // do we need more than 10,000 values??Í
+      .ascending('createdAt')
+      .find();
+  }
+
+  // getRelatedPatient(): FRSPatient {
+
+  // }
+}
+
+class ChatMessage extends Parse.Object {
+  constructor() {
+    super('ChatMessage');
+  }
+
+  static getMessagesForMissionId(
+    misionId: string
+  ): Promise<Array<ChatMessage>> {
+    return new Parse.Query(ChatMessage)
+      .equalTo('for_mission', misionId)
+      .ascending('createdAt')
+      .find();
+  }
+
+  getSender(): MWorker {
+    return this.get('sender');
+  }
+
+  isSenderBase(): Promise<boolean> {
+    // todo: maybe make this better?
+    return this.getSender()
+      .getRole()
+      .then((r) => r === 'base_worker');
+  }
+
+  getMessage() {
+    return this.get('message');
+  }
+
+  getImage() {
+    const img = this.get('image');
+    if (img !== undefined) return img.url();
+    return null;
+  }
+}
+
+class Mission extends Parse.Object {
+  constructor() {
+    super('Mission');
+  }
+
+  static getCompletedMissions(): Promise<Array<Mission>> {
+    return new Parse.Query(Mission).equalTo('status', 'complete').find();
+  }
+
+  static getByID(id: string): Promise<Mission> {
+    return new Parse.Query(Mission).equalTo('objectId', id).first();
+  }
+
+  getBaseWorkers(): Promise<Array<MWorker>> {
+    return this.relation('base_workers').query().find();
+  }
+
+  getFieldWorkers(): Promise<Array<MWorker>> {
+    return this.relation('field_workers').query().find();
+  }
+
+  getPatients(): Promise<Array<Parse.Object>> {
+    return this.relation('patients').query().find();
+  }
+}
+
+class MWorker extends Parse.Object {
   constructor() {
     super('Worker');
   }
 
-  private static getWorkersWithRole(role: string): Promise<Array<FRSWorker>> {
+  private static getWorkersWithRole(role: string): Promise<Array<MWorker>> {
     return new Parse.Query(Parse.Role)
       .equalTo('name', role)
       .first()
@@ -17,22 +111,22 @@ class FRSWorker extends Parse.Object {
       .then((users: Array<Parse.User>) => {
         return Promise.all(
           users.map((u) =>
-            new Parse.Query(FRSWorker).equalTo('user_id', u.id).first()
+            new Parse.Query(MWorker).equalTo('user_id', u.id).first()
           )
         );
       });
   }
 
-  static getFieldWorkers(): Promise<Array<FRSWorker>> {
+  static getFieldWorkers(): Promise<Array<MWorker>> {
     return this.getWorkersWithRole('field_responder');
   }
 
-  static getBaseWorkers(): Promise<Array<FRSWorker>> {
+  static getBaseWorkers(): Promise<Array<MWorker>> {
     return this.getWorkersWithRole('base_worker');
   }
 
-  static getById(id: string): Promise<FRSWorker> {
-    return new Parse.Query(FRSWorker).equalTo('objectId', id).first();
+  static getById(id: string): Promise<MWorker> {
+    return new Parse.Query(MWorker).equalTo('objectId', id).first();
   }
 
   getFirstName() {
@@ -95,7 +189,10 @@ class API {
     Parse.initialize('frsAppID');
     Parse.serverURL = 'http://localhost:1337/parse';
 
-    Parse.Object.registerSubclass('Worker', FRSWorker);
+    Parse.Object.registerSubclass('Worker', MWorker);
+    Parse.Object.registerSubclass('Mission', Mission);
+    Parse.Object.registerSubclass('ChatMessage', ChatMessage);
+    Parse.Object.registerSubclass('MedicalData', MedicalDataPt);
     console.log('API Initialized');
   }
 
@@ -139,4 +236,4 @@ class API {
   }
 }
 
-export { API, FRSWorker };
+export { API, MWorker, Mission, ChatMessage, MedicalDataPt };

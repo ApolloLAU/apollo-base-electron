@@ -10,6 +10,8 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     'max-classes-per-file': 'off',
     'no-plusplus': 'off',
+    'react/no-array-index-key': 'off',
+    'react/prop-types': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

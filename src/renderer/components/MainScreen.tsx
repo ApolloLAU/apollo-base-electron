@@ -5,6 +5,8 @@ import NavigationMenu from './NavigationMenu';
 import { API } from '../api/API';
 import TeamScreen from './TeamScreen';
 import OperatorScreen from './OperatorScreen';
+import HistoryScreen from './HistoryScreen';
+import PastMissionScreen from './PastMissionScreen';
 
 export default function MainScreen() {
   const history = useHistory();
@@ -25,6 +27,8 @@ export default function MainScreen() {
       <Switch>
         <Route path="/main/team/:id" component={OperatorScreen} />
         <Route path="/main/team" component={TeamScreen} />
+        <Route path="/main/history/:id" component={PastMissionScreen} />
+        <Route path="/main/history" component={HistoryScreen} />
       </Switch>
     </div>
   );
