@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import NavigationMenu from './NavigationMenu';
 import { API } from '../api/API';
@@ -7,19 +7,21 @@ import TeamScreen from './TeamScreen';
 import OperatorScreen from './OperatorScreen';
 import HistoryScreen from './HistoryScreen';
 import PastMissionScreen from './PastMissionScreen';
+import AdminScreen from './AdminScreen';
 
 export default function MainScreen() {
   const history = useHistory();
+  const location = useLocation();
   const [role, setRole] = useState('');
 
   useEffect(() => {
+    console.log('USE EFFECT CALLED!!');
     const user = API.getLoggedInUser();
+    console.log(location.pathname);
     if (user) {
       API.getRoleForUser(user).then((r) => setRole(r));
-    } else {
-      history.push('/');
-    }
-  }, []);
+    } else if (location.pathname !== '/admin') history.push('/');
+  }, [location]);
 
   return (
     <div>

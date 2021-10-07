@@ -21,28 +21,36 @@ export default function Login() {
 
   const onClickLogin = () => {
     // todo: FRONTEND - show error if form not filled
+    console.log(email, password);
     setLoginEnabled(false);
-    API.login(email, password)
-      .then((user) => {
-        console.log('User Logged In');
-        return API.getRoleForUser(user);
-      })
-      .then((role) => {
-        if (role === 'field_worker') {
-          // todo: show role error
-        } else if (role === 'base_worker') {
+    if (email === 'admin' && password === 'admin') {
+      // go to district creator!!
+      console.log('pushing admin');
+      setLoginEnabled(true);
+      history.push('/admin');
+    } else {
+      API.login(email, password)
+        .then((user) => {
+          console.log('User Logged In');
+          return API.getRoleForUser(user);
+        })
+        .then((role) => {
+          if (role === 'field_worker') {
+            // todo: show role error
+          } else if (role === 'base_worker') {
+            setLoginEnabled(true);
+            history.push('/main/mission');
+          } else {
+            setLoginEnabled(true);
+            history.push('/main/team');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
           setLoginEnabled(true);
-          history.push('/main/mission');
-        } else {
-          setLoginEnabled(true);
-          history.push('/main/team');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoginEnabled(true);
-        // todo: FRONTEND - Show Login Error
-      });
+          // todo: FRONTEND - Show Login Error
+        });
+    }
   };
 
   return (

@@ -2,6 +2,27 @@
 // @ts-ignore
 import { Parse } from 'parse';
 
+class District extends Parse.Object {
+  constructor() {
+    super('District');
+  }
+
+  setName(name: string) {
+    this.set('name', name);
+  }
+
+  setLoc(loc: Parse.GeoPoint) {
+    this.set('location', loc);
+  }
+
+  static createDistrict(name: string, loc: Parse.GeoPoint): Promise<District> {
+    const district = new District();
+    district.setName(name);
+    district.setLoc(loc);
+    return district.save();
+  }
+}
+
 class MedicalDataPt extends Parse.Object {
   constructor() {
     super('MedicalData');
@@ -133,24 +154,41 @@ class MWorker extends Parse.Object {
     return this.get('firstname');
   }
 
+  setFirstName(fName: string) {
+    this.set('firstname', fName);
+  }
+
   getLastName() {
     return this.get('lastname');
+  }
+
+  setLastName(lName: string) {
+    this.set('lastname', lName);
   }
 
   getImgURL() {
     return this.get('image_file').url();
   }
 
-  getStatus() {
-    return this.get('status');
+  setImg(base64Img: string, imgName: string) {
+    const f = Parse.File(imgName, { base64: base64Img });
+    return f.save().then(() => this.set('image_file', f));
   }
 
   getCellNbr() {
     return this.get('phoneNb');
   }
 
+  setCellNbr(nbr: string) {
+    return this.set('phoneNb', nbr);
+  }
+
   getUserID() {
     return this.get('user_id');
+  }
+
+  setUserID(id: string) {
+    return this.set('user_id');
   }
 
   getUsername(): Promise<string> {
@@ -160,6 +198,14 @@ class MWorker extends Parse.Object {
       .then((user: Parse.User) => {
         return user.getUsername();
       });
+  }
+
+  getDistrict(): District {
+    return this.get('district');
+  }
+
+  setDistrict(district: District) {
+    this.set('district', district);
   }
 
   getRole(): Promise<string> {
@@ -193,6 +239,7 @@ class API {
     Parse.Object.registerSubclass('Mission', Mission);
     Parse.Object.registerSubclass('ChatMessage', ChatMessage);
     Parse.Object.registerSubclass('MedicalData', MedicalDataPt);
+    Parse.Object.registerSubclass('District', District);
     console.log('API Initialized');
   }
 
@@ -236,4 +283,4 @@ class API {
   }
 }
 
-export { API, MWorker, Mission, ChatMessage, MedicalDataPt };
+export { API, MWorker, Mission, ChatMessage, MedicalDataPt, District };

@@ -5,6 +5,7 @@ import './App.global.css';
 import Login from './components/Login';
 import { API } from './api/API';
 import MainScreen from './components/MainScreen';
+import AdminScreen from './components/AdminScreen';
 
 export default function App() {
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function App() {
     <Router>
       <Switch>
         <Route path="/main" component={MainScreen} />
+        <Route path="/admin" component={AdminScreen} />
         <Route path="/" component={Login} />
       </Switch>
     </Router>

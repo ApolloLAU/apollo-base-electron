@@ -12,6 +12,7 @@ module.exports = {
     'no-plusplus': 'off',
     'react/no-array-index-key': 'off',
     'react/prop-types': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
