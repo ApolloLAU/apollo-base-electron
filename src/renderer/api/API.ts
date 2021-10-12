@@ -15,10 +15,14 @@ class District extends Parse.Object {
     this.set('location', loc);
   }
 
-  static createDistrict(name: string, loc: Parse.GeoPoint): Promise<District> {
+  static createDistrict(
+    name: string,
+    loc: { longitude: number; latitude: number }
+  ): Promise<District> {
     const district = new District();
+    const pt = new Parse.GeoPoint(loc);
     district.setName(name);
-    district.setLoc(loc);
+    district.setLoc(pt);
     return district.save();
   }
 }
@@ -122,28 +126,20 @@ class MWorker extends Parse.Object {
     super('Worker');
   }
 
-  private static getWorkersWithRole(role: string): Promise<Array<MWorker>> {
-    return new Parse.Query(Parse.Role)
-      .equalTo('name', role)
-      .first()
-      .then((roleObj: Parse.Role) => {
-        return roleObj.getUsers().query().find();
-      })
-      .then((users: Array<Parse.User>) => {
-        return Promise.all(
-          users.map((u) =>
-            new Parse.Query(MWorker).equalTo('user_id', u.id).first()
-          )
-        );
-      });
+  private static getWorkersWithRole(role: string, district: District): Promise<Array<MWorker>> {
+    return new Parse.Query(MWorker).equalTo('role', role).equalTo('district', district).find();
   }
 
-  static getFieldWorkers(): Promise<Array<MWorker>> {
-    return this.getWorkersWithRole('field_responder');
+  static getDistrictChiefs(district: District): Promise<Array<MWorker>> {
+    return this.getWorkersWithRole('district_chief', district);
   }
 
-  static getBaseWorkers(): Promise<Array<MWorker>> {
-    return this.getWorkersWithRole('base_worker');
+  static getFieldWorkers(district: District): Promise<Array<MWorker>> {
+    return this.getWorkersWithRole('field_responder', district);
+  }
+
+  static getBaseWorkers(district: District): Promise<Array<MWorker>> {
+    return this.getWorkersWithRole('base_worker', district);
   }
 
   static getById(id: string): Promise<MWorker> {
@@ -171,7 +167,7 @@ class MWorker extends Parse.Object {
   }
 
   setImg(base64Img: string, imgName: string) {
-    const f = Parse.File(imgName, { base64: base64Img });
+    const f = new Parse.File(imgName, { base64: base64Img });
     return f.save().then(() => this.set('image_file', f));
   }
 
@@ -188,7 +184,7 @@ class MWorker extends Parse.Object {
   }
 
   setUserID(id: string) {
-    return this.set('user_id');
+    return this.set('user_id', id);
   }
 
   getUsername(): Promise<string> {
@@ -208,25 +204,12 @@ class MWorker extends Parse.Object {
     this.set('district', district);
   }
 
-  getRole(): Promise<string> {
-    return this.getUsername().then((username) => {
-      // eslint-disable-next-line promise/no-nesting
-      return new Parse.Query(Parse.Role)
-        .findAll()
-        .then(async (roles: Parse.Role[]) => {
-          for (let i = 0; i < roles.length; i++) {
-            const r = roles[i];
-            // eslint-disable-next-line no-await-in-loop
-            const count = await r
-              .getUsers()
-              .query()
-              .equalTo('username', username)
-              .count();
-            if (count === 1) return r.getName();
-          }
-          return '';
-        });
-    });
+  getRole(): string {
+    return this.get('role');
+  }
+
+  setRole(role: string) {
+    this.set('role', role);
   }
 }
 
@@ -243,6 +226,10 @@ class API {
     console.log('API Initialized');
   }
 
+  static getWorkerForUser(user: Parse.User): Promise<MWorker> {
+    return new Parse.Query(MWorker).equalTo('user_id', user.id).first();
+  }
+
   static async login(username: string, pass: string) {
     console.log(Parse);
     return Parse.User.logIn(username, pass);
@@ -254,28 +241,6 @@ class API {
 
   static getLoggedInUser(): Parse.User | null {
     return Parse.User.current();
-  }
-
-  static getRoleForUser(user: Parse.User): Promise<string> {
-    const query = new Parse.Query(Parse.Role);
-    return query.find().then(async (roles: Array<Parse.Role>) => {
-      let finalRole = '';
-      for (const r of roles) {
-        // eslint-disable-next-line no-await-in-loop
-        const count = await r
-          .getUsers()
-          .query()
-          .equalTo('username', user.getUsername())
-          .count();
-        if (count === 1) finalRole = r.getName();
-      }
-      return finalRole;
-    });
-    // for (ParseRole r : roles) {
-    //   if(r.getUsers().getQuery().whereEqualTo("username", this.getUsername()).count() == 1) {
-    //     return r.getName();
-    //   }
-    // }
   }
 
   static logOut() {

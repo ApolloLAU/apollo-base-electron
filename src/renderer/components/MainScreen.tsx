@@ -7,7 +7,6 @@ import TeamScreen from './TeamScreen';
 import OperatorScreen from './OperatorScreen';
 import HistoryScreen from './HistoryScreen';
 import PastMissionScreen from './PastMissionScreen';
-import AdminScreen from './AdminScreen';
 
 export default function MainScreen() {
   const history = useHistory();
@@ -19,7 +18,7 @@ export default function MainScreen() {
     const user = API.getLoggedInUser();
     console.log(location.pathname);
     if (user) {
-      API.getRoleForUser(user).then((r) => setRole(r));
+      API.getWorkerForUser(user).then((r) => setRole(r.getRole()));
     } else if (location.pathname !== '/admin') history.push('/');
   }, [location]);
 

@@ -1,25 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { MWorker } from '../api/API';
+import { MWorker, API } from '../api/API';
 import OperatorCard from './OperatorCard';
 
 export default function TeamScreen() {
   const [baseWorkers, setBaseWorkers] = useState([]);
   const [fieldWorkers, setFieldWorkers] = useState([]);
+  const [chiefs, setChiefs] = useState([])
 
   useEffect(() => {
-    MWorker.getBaseWorkers().then((bWorkers) => {
-      console.log('base workers:');
-      setBaseWorkers(bWorkers);
-    });
-    MWorker.getFieldWorkers().then((fWorkers) => {
-      console.log('field workers:');
-      setFieldWorkers(fWorkers);
-    });
+    API.getWorkerForUser(API.getLoggedInUser()).then((mworker) => {
+      const district = mworker.getDistrict();
+      MWorker.getDistrictChiefs(district).then((cWorkers) => {
+        setChiefs(cWorkers);
+      });
+      MWorker.getBaseWorkers(district).then((bWorkers) => {
+        console.log('base workers:');
+        setBaseWorkers(bWorkers);
+      });
+      MWorker.getFieldWorkers(district).then((fWorkers) => {
+        console.log('field workers:');
+        setFieldWorkers(fWorkers);
+      });
+    })
+
   }, []);
 
   return (
     <div>
       <div>
+        <h2>District Chiefs</h2>
+        {chiefs.map((worker) => (
+          <OperatorCard
+            name={`${worker.getFirstName()} ${worker.getLastName()}`}
+            imgUrl={worker.getImgURL()}
+            status={worker.getStatus()}
+            objectId={worker.id}
+            key={worker.id}
+          />
+        ))}
         <h2>Base Workers</h2>
         {baseWorkers.map((worker) => (
           <OperatorCard

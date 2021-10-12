@@ -11,11 +11,14 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
+const mime = require('mime-types');
 
 export default class AppUpdater {
   constructor() {
@@ -32,6 +35,24 @@ let mainWindow: BrowserWindow | null = null;
 //   console.log(msgTemplate(arg));
 //   event.reply('ipc-example', msgTemplate('pong'));
 // });
+ipcMain.handle('chooseImage', (event, arg) => {
+  console.log('opening electron dialog!');
+  const filePaths = dialog.showOpenDialogSync({
+    title: 'Choose an Image',
+    properties: ['openFile'],
+    filters: [{ name: 'Images', extensions: ['png', 'jpeg', 'jpg'] }],
+  });
+
+  if (filePaths && filePaths?.length > 0) {
+    const buffer = fs.readFileSync(filePaths[0]).toString('base64');
+    // console.log(base64);
+    const type = mime.lookup(filePaths[0]);
+    // console.log(type);
+    return { imgData: buffer, type };
+  }
+
+  return { imgData: '', type: '' };
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

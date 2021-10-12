@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
-import { District, MWorker } from 'renderer/api/API';
+import { District, MWorker, API } from 'renderer/api/API';
 import { Parse } from 'parse';
 
 export default function AdminScreen() {
@@ -10,51 +10,102 @@ export default function AdminScreen() {
     longitude: 0.0,
   }); // todo: need a map or smth to select
   const [formState, setFormState] = useState({
-    districtName: '',
-    chiefFname: '',
-    chiefLname: '',
-    chiefEmail: '',
-    chiefPass: '',
-    chiefCell: '',
+    imgData: '',
+    imgType: '',
+    districtName: 'Byblos',
+    chiefFname: 'Peter',
+    chiefLname: 'Sakr',
+    chiefEmail: 'p.s@gmail.com',
+    chiefPass: 'test123',
+    chiefCell: '123456',
   });
+
+  useEffect(() => {
+    // make sure we are logged out!
+    API.logout();
+  }, []);
 
   const handleChange = (evt) => {
     const { value } = evt.target;
     setFormState({ ...formState, [evt.target.name]: value });
   };
 
-  const handleRegister = () => {
+  const handleRegister = (event) => {
+    event.preventDefault();
     // todo: form validation
+    console.log('saving district');
     District.createDistrict(formState.districtName, location).then(
-      async (district) => {
+      (district) => {
+        console.log('DISTRICT SAVED!');
         const userName = `${
           formState.chiefFname.toLowerCase().replace(/\s+/g, '') +
-          formState.chiefFname.toLowerCase().replace(/\s+/g, '')
+          formState.chiefLname.toLowerCase().replace(/\s+/g, '')
         }.chief`;
 
-        const user = await Parse.User.signUp(userName, formState.chiefPass);
-        const role = new Parse.Query(Parse.Role)
-          .equalTo('name', 'district_chief')
-          .first();
-        role.getUsers().add(user);
-        await role.save();
+        return Promise.all([
+          district,
+          Parse.User.signUp(userName, formState.chiefPass),
+        ]);
+      })
+      .then(([district, user]) => {
         const w = new MWorker();
         w.setFirstName(formState.chiefFname);
         w.setLastName(formState.chiefLname);
         w.setCellNbr(formState.chiefCell);
         w.setUserID(user.id);
         w.setDistrict(district);
-        // w.setImg() TODO
-        await w.save();
+        w.setRole('district_chief');
+        if (formState.imgData !== '')
+          return w
+            .setImg(
+              formState.imgData,
+              `profile.${formState.imgType.replace('image/', '')}`
+            )
+            .then(() => w.save());
+        return w.save();
+      })
+      .then((_) => {
+        console.log('COMPLETE');
         history.push('/main/history');
-      }
-    );
+      });
   };
+
+  const onImageClick = (event) => {
+    event.preventDefault();
+    window.electron.ipcRenderer.invoke('chooseImage').then((resObj) => {
+      console.log(resObj);
+      if (resObj.imgData !== '') {
+        setFormState({
+          ...formState,
+          imgData: resObj.imgData,
+          imgType: resObj.type,
+        });
+      }
+    });
+  };
+
+  // window.electron.ipcRenderer.on('chosenFile', (event, arg, arg2) => {
+  //   console.log('RECEIVED FILE', arg, arg2);
+  //   const [base64, type] = arg;
+  //   console.log(base64, type);
+  //   if (base64 !== '') {
+  //     setFormState({ ...formState, imgData: base64, imgType: type});
+  //   }
+  // });
 
   return (
     <div>
       <h1>Create District</h1>
       <form>
+        <img
+          src={
+            formState.imgData !== ''
+              ? `data:${formState.imgType};base64,${formState.imgData}`
+              : ''
+          }
+          alt="profile"
+        />
+        <button type="submit" onClick={onImageClick}>Choose Image</button>
         <label>
           District Name
           <input

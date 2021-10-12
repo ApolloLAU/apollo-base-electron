@@ -32,7 +32,7 @@ export default function Login() {
       API.login(email, password)
         .then((user) => {
           console.log('User Logged In');
-          return API.getRoleForUser(user);
+          return API.getWorkerForUser(user).then((w) => w.getRole());
         })
         .then((role) => {
           if (role === 'field_worker') {
