@@ -13,7 +13,7 @@ type ChatMessageProps = {
 function ChatMessageComponent({ message }: ChatMessageProps) {
   const [isSender, setIsSender] = useState(false);
   useEffect(() => {
-    message.isSenderBase().then((b) => setIsSender(b));
+    setIsSender(message.isSenderBase());
   });
 
   const imgUrl = message.getImage();

@@ -55,6 +55,7 @@ export default function AdminScreen() {
         w.setUserID(user.id);
         w.setDistrict(district);
         w.setRole('district_chief');
+        w.setStatus('online');
         if (formState.imgData !== '')
           return w
             .setImg(

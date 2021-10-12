@@ -5,11 +5,12 @@ import OperatorCard from './OperatorCard';
 export default function TeamScreen() {
   const [baseWorkers, setBaseWorkers] = useState([]);
   const [fieldWorkers, setFieldWorkers] = useState([]);
-  const [chiefs, setChiefs] = useState([])
+  const [chiefs, setChiefs] = useState([]);
 
   useEffect(() => {
-    API.getWorkerForUser(API.getLoggedInUser()).then((mworker) => {
-      const district = mworker.getDistrict();
+    // todo: work on getting live status updates
+    API.getWorkerForUser(API.getLoggedInUser()).then((mWorker) => {
+      const district = mWorker.getDistrict();
       MWorker.getDistrictChiefs(district).then((cWorkers) => {
         setChiefs(cWorkers);
       });
@@ -21,8 +22,12 @@ export default function TeamScreen() {
         console.log('field workers:');
         setFieldWorkers(fWorkers);
       });
-    })
+    });
 
+    // if the component unmounts, unsubscribe from livequery
+    // return () => {
+    //   API.unsubscribeSession();
+    // };
   }, []);
 
   return (

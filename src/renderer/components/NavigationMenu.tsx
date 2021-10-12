@@ -8,9 +8,9 @@ type NavigationMenuProps = {
 
 export default function NavigationMenu({ role }: NavigationMenuProps) {
   const history = useHistory();
-  const logout = () => {
-    API.logout();
-    history.push('/');
+  const logout = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    API.logOut().then(() => history.push('/'));
   };
 
   if (role === 'base_worker') {
@@ -32,7 +32,7 @@ export default function NavigationMenu({ role }: NavigationMenuProps) {
       <Link to="/main/records">Records</Link>
       <Link to="/main/history">History</Link>
       <Link to="/main/team">Team</Link>
-      <Link to="/main/team_member">Add Member</Link>
+      <Link to="/main/add_member">Add Member</Link>
       <button type="submit" onClick={logout}>
         Logout
       </button>

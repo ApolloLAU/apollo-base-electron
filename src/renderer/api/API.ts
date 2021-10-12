@@ -77,11 +77,9 @@ class ChatMessage extends Parse.Object {
     return this.get('sender');
   }
 
-  isSenderBase(): Promise<boolean> {
+  isSenderBase(): boolean {
     // todo: maybe make this better?
-    return this.getSender()
-      .getRole()
-      .then((r) => r === 'base_worker');
+    return this.getSender().getRole() === 'base_worker';
   }
 
   getMessage() {
@@ -126,8 +124,14 @@ class MWorker extends Parse.Object {
     super('Worker');
   }
 
-  private static getWorkersWithRole(role: string, district: District): Promise<Array<MWorker>> {
-    return new Parse.Query(MWorker).equalTo('role', role).equalTo('district', district).find();
+  private static getWorkersWithRole(
+    role: string,
+    district: District
+  ): Promise<Array<MWorker>> {
+    return new Parse.Query(MWorker)
+      .equalTo('role', role)
+      .equalTo('district', district)
+      .find();
   }
 
   static getDistrictChiefs(district: District): Promise<Array<MWorker>> {
@@ -211,6 +215,14 @@ class MWorker extends Parse.Object {
   setRole(role: string) {
     this.set('role', role);
   }
+
+  getStatus(): string {
+    return this.get('status');
+  }
+
+  setStatus(status: string) {
+    this.set('status', status);
+  }
 }
 
 class API {
@@ -235,16 +247,17 @@ class API {
     return Parse.User.logIn(username, pass);
   }
 
-  static logout() {
-    Parse.User.logOut();
-  }
-
   static getLoggedInUser(): Parse.User | null {
     return Parse.User.current();
   }
 
   static logOut() {
-    Parse.User.logOut();
+    return API.getWorkerForUser(API.getLoggedInUser())
+      .then((worker) => {
+        worker.setStatus('offline');
+        return worker.save();
+      })
+      .then(() => Parse.User.logOut());
   }
 }
 

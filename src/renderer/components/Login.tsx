@@ -32,7 +32,14 @@ export default function Login() {
       API.login(email, password)
         .then((user) => {
           console.log('User Logged In');
-          return API.getWorkerForUser(user).then((w) => w.getRole());
+          return API.getWorkerForUser(user);
+        })
+        .then(async (w) => {
+          if (w.getRole() !== 'field_worker') {
+            w.setStatus('online');
+            await w.save();
+          }
+          return w.getRole();
         })
         .then((role) => {
           if (role === 'field_worker') {
