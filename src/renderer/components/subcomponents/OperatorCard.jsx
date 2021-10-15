@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import './OperatorCard.global.css';
+import './css/OperatorCard.global.scss';
 
 export default function OperatorCard({ name, imgUrl, status, objectId }) {
   const history = useHistory();
@@ -17,9 +17,16 @@ export default function OperatorCard({ name, imgUrl, status, objectId }) {
   };
 
   return (
-    <div onClick={onClick} onKeyDown={onClick} role="button" tabIndex={0}>
-      <h1>{name}</h1>
-      <img src={imgUrl} alt="operator-profile-pic" />
+    <div
+      onClick={onClick}
+      onKeyDown={onClick}
+      role="button"
+      tabIndex={0}
+      className="card"
+    >
+      <div style={{ background: `url(${imgUrl})` }} className="rect" />
+      <h1 className="name">{name}</h1>
+      <img src={imgUrl} alt="operator-profile-pic" className="image" />
       <span className="circle" style={circlePreview()} />
     </div>
   );

@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { useHistory } from 'react-router';
-import icon from '../../../assets/FRSLogo.png';
-import './Login.global.css';
-import { API } from '../api/API';
+import icon from '../../../../assets/FRSLogo.png';
+import '../css/Login.global.css';
+import { API } from '../../api/API';
 
 export default function Login() {
   const history = useHistory();
@@ -19,8 +19,9 @@ export default function Login() {
     setPassword(event.target.value);
   };
 
-  const onClickLogin = () => {
+  const onClickLogin = (evt: FormEvent<HTMLFormElement>) => {
     // todo: FRONTEND - show error if form not filled
+    evt.preventDefault();
     console.log(email, password);
     setLoginEnabled(false);
     if (email === 'admin' && password === 'admin') {
@@ -62,24 +63,21 @@ export default function Login() {
 
   return (
     <div className="login">
-      <div className="logo">
-        <img width="294px" alt="icon" src={icon} />
-      </div>
-      <input id="field" type="text" value={email} onChange={onEmailChange} />
-      <input
-        id="field"
-        type="password"
-        value={password}
-        onChange={onPassChange}
-      />
-      <button
-        className="login-button"
-        type="submit"
-        onClick={onClickLogin}
-        disabled={!loginEnabled}
-      >
-        Log in
-      </button>
+      <form onSubmit={onClickLogin}>
+        <div className="logo">
+          <img width="294px" alt="icon" src={icon} />
+        </div>
+        <input id="field" type="text" value={email} onChange={onEmailChange} />
+        <input
+          id="field"
+          type="password"
+          value={password}
+          onChange={onPassChange}
+        />
+        <button className="login-button" type="submit" disabled={!loginEnabled}>
+          Log in
+        </button>
+      </form>
     </div>
   );
 }

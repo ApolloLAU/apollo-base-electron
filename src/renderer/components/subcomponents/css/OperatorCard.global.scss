@@ -1,0 +1,48 @@
+.circle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  align-self: start;
+  margin: 25px;
+  z-index: 5;
+}
+
+.rect {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain !important;
+  z-index: 5;
+  filter: blur(10px);
+  clip-path: inset(260px 0 0 0);
+  border-radius: 30%;
+}
+
+.card {
+  align-items: end;
+  width: 350px;
+  height: 350px;
+  position: relative;
+}
+
+.name {
+  position: absolute;
+  bottom: 0;
+  grid-column: 1;
+  grid-row: 1;
+  color: white;
+  z-index: 5;
+  margin-left: 10px;
+}
+
+.image {
+  position: absolute;
+  width: 350px;
+  z-index: -1;
+  border-radius: 10%;
+}
+

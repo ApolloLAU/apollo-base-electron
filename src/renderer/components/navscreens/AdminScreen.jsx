@@ -1,7 +1,8 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { District, MWorker, API } from 'renderer/api/API';
 import { Parse } from 'parse';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 export default function AdminScreen() {
   const history = useHistory();
@@ -22,7 +23,7 @@ export default function AdminScreen() {
 
   useEffect(() => {
     // make sure we are logged out!
-    API.logout();
+    API.logOut();
   }, []);
 
   const handleChange = (evt) => {
@@ -34,8 +35,8 @@ export default function AdminScreen() {
     event.preventDefault();
     // todo: form validation
     console.log('saving district');
-    District.createDistrict(formState.districtName, location).then(
-      (district) => {
+    District.createDistrict(formState.districtName, location)
+      .then((district) => {
         console.log('DISTRICT SAVED!');
         const userName = `${
           formState.chiefFname.toLowerCase().replace(/\s+/g, '') +
@@ -97,6 +98,17 @@ export default function AdminScreen() {
   return (
     <div>
       <h1>Create District</h1>
+      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[51.505, -0.09]}>
+          <Popup>
+            A pretty CSS3 popup. <br /> Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
       <form>
         <img
           src={
@@ -106,7 +118,9 @@ export default function AdminScreen() {
           }
           alt="profile"
         />
-        <button type="submit" onClick={onImageClick}>Choose Image</button>
+        <button type="submit" onClick={onImageClick}>
+          Choose Image
+        </button>
         <label>
           District Name
           <input

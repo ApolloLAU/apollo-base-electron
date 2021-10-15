@@ -1,0 +1,44 @@
+.main-div {
+  display: flex;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  font-weight: 600;
+  color: #550c18;
+  font-size: 50px;
+  margin: 0;
+}
+
+.profile-pic {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  margin: 20px;
+}
+
+.profile-area {
+  display: flex;
+  align-items: center;
+}
+
+.logged-in-area {
+  color: #550c18;
+  font-size: 20px;
+}
+
+.profile-name {
+  color: #550c18;
+  font-weight: 600;
+  font-size: 30px;
+}
+
+.content-area {
+  width: 100%;
+}

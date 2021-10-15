@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Parse } from 'parse';
-import { API, MWorker } from '../api/API';
+import { API, MWorker } from '../../api/API';
 
 export default function AddMemberScreen() {
   const [formData, setFormData] = useState({

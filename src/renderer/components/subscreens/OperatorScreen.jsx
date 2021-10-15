@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { MWorker } from '../api/API';
+import { MWorker } from '../../api/API';
 
 export default function OperatorScreen() {
   const { id } = useParams();

@@ -252,6 +252,8 @@ class API {
   }
 
   static logOut() {
+    const currentUser = API.getLoggedInUser();
+    if (!currentUser) return Promise.resolve();
     return API.getWorkerForUser(API.getLoggedInUser())
       .then((worker) => {
         worker.setStatus('offline');

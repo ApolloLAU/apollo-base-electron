@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { ChatMessage, MedicalDataPt, Mission } from 'renderer/api/API';
-import ChatLog from './ChatLog';
+import ChatLog from '../subcomponents/ChatLog';
 
-import './PastMission.global.css';
+import '../css/PastMission.global.css';
 
 export default function PastMissionScreen() {
   const { id } = useParams();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { MWorker, API } from '../api/API';
-import OperatorCard from './OperatorCard';
+import { MWorker, API } from '../../api/API';
+import OperatorCard from '../subcomponents/OperatorCard';
 
 export default function TeamScreen() {
   const [baseWorkers, setBaseWorkers] = useState([]);
