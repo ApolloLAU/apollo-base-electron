@@ -256,6 +256,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-leaflet": "^3.2.2",
+    "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.5"
   },
@@ -282,10 +283,5 @@
       }
     ],
     "singleQuote": true
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }

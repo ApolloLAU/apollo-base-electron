@@ -5,7 +5,6 @@
 import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { merge } from 'webpack-merge';
@@ -53,13 +52,6 @@ export default merge(baseConfig, {
         // CSS/SCSS
         test: /\.s?css$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // `./dist` can't be inerhited for publicPath for styles. Otherwise generated paths will be ./dist/dist
-              publicPath: './',
-            },
-          },
           'css-loader',
           'sass-loader',
         ],
@@ -157,9 +149,6 @@ export default merge(baseConfig, {
       DEBUG_PROD: false,
     }),
 
-    new MiniCssExtractPlugin({
-      filename: 'style.css',
-    }),
 
     new BundleAnalyzerPlugin({
       analyzerMode:

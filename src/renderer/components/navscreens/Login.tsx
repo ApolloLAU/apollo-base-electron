@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { useHistory } from 'react-router';
 import icon from '../../../../assets/FRSLogo.png';
-import '../css/Login.global.css';
+import './css/Login.css';
 import { API } from '../../api/API';
 
 export default function Login() {
@@ -62,22 +62,18 @@ export default function Login() {
   };
 
   return (
-    <div className="login">
-      <form onSubmit={onClickLogin}>
-        <div className="logo">
-          <img width="294px" alt="icon" src={icon} />
-        </div>
-        <input id="field" type="text" value={email} onChange={onEmailChange} />
-        <input
-          id="field"
-          type="password"
-          value={password}
-          onChange={onPassChange}
-        />
-        <button className="login-button" type="submit" disabled={!loginEnabled}>
-          Log in
-        </button>
-      </form>
-    </div>
+    <form onSubmit={onClickLogin} className="login">
+      <img width="294px" alt="icon" src={icon} className="logo-login" />
+      <input id="field" type="text" value={email} onChange={onEmailChange} />
+      <input
+        id="field"
+        type="password"
+        value={password}
+        onChange={onPassChange}
+      />
+      <button className="login-button" type="submit" disabled={!loginEnabled}>
+        Log in
+      </button>
+    </form>
   );
 }

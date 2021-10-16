@@ -11,7 +11,9 @@ import AddMemberScreen from './navscreens/AddMemberScreen';
 import CurrentMissionScreen from './navscreens/CurrentMissionScreen';
 import DispatchScreen from './navscreens/DispatchScreen';
 
-import './css/MainScreen.global.css';
+import './css/MainScreen.css';
+
+import placeholder from '../../../assets/empty-profile-picture.png';
 
 export default function MainScreen() {
   const history = useHistory();
@@ -51,6 +53,8 @@ export default function MainScreen() {
     } else if (location.pathname !== '/admin') history.push('/');
   }, [location]);
 
+  let finalImg = imgUrl !== '' ? imgUrl : placeholder;
+
   return (
     <div className="main-div">
       <NavigationMenu role={role} />
@@ -63,7 +67,7 @@ export default function MainScreen() {
               <br />
               <span className="profile-name">Peter Sakr</span>
             </span>
-            <img src={imgUrl} alt="profile" className="profile-pic" />
+            <img src={finalImg} alt="profile" className="profile-pic" />
           </div>
         </div>
         <Switch>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { ChatMessage, MedicalDataPt, Mission } from 'renderer/api/API';
 import ChatLog from '../subcomponents/ChatLog';
 
-import '../css/PastMission.global.css';
+import './css/PastMission.css';
 
 export default function PastMissionScreen() {
   const { id } = useParams();

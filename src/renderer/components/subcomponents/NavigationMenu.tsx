@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { API } from '../../api/API';
-import './css/NavigationMenu.global.scss';
+import './css/NavigationMenu.scss';
 
 import app_icon from '../../../../assets/FRSLogo.png';
 import ambulance from '../../../../assets/ambulance.png';
@@ -74,7 +74,7 @@ export default function NavigationMenu({ role }: NavigationMenuProps) {
           <img src={team_icon} alt="team" className="nav-icon" />
           Team
         </Link>
-        <button type="submit" onClick={logout} className="nav-button">
+        <button type="submit" onClick={logout} className="old-button">
           <img src={logout_icon} alt="team" className="nav-icon" />
           Logout
         </button>
@@ -82,7 +82,8 @@ export default function NavigationMenu({ role }: NavigationMenuProps) {
     );
   }
   return (
-    <div>
+    <div className="nav-menu">
+      <img src={app_icon} alt="app-icon" className="logo" />
       <Link
         to="/main/records"
         className={isCurrentLoc('records') ? 'nav-button-active' : 'nav-button'}
@@ -113,7 +114,7 @@ export default function NavigationMenu({ role }: NavigationMenuProps) {
         <img src={add_user} alt="team" className="nav-icon" />
         Add Member
       </Link>
-      <button type="submit" onClick={logout} className="nav-button">
+      <button type="submit" onClick={logout} className="old-button">
         <img src={logout_icon} alt="team" className="nav-icon" />
         Logout
       </button>

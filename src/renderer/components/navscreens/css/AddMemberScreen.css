@@ -1,0 +1,29 @@
+.main-form {
+  display: flex;
+  width: 100%;
+}
+
+.label-group {
+  flex:1;
+}
+
+.label-cell {
+  width: 100px;
+}
+
+.text-box {
+  width: 100%;
+  min-height: 40px !important;
+  padding-left: 1em;;
+}
+
+.profile-pic {
+  width: 10em;
+  height: 10em;
+}
+
+.form-input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+}

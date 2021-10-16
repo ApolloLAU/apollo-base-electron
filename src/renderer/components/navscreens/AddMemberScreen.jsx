@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Parse } from 'parse';
 import { API, MWorker } from '../../api/API';
+import './css/AddMemberScreen.css';
+
+import placeholder from '../../../../assets/empty-profile-picture.png';
 
 export default function AddMemberScreen() {
   const [formData, setFormData] = useState({
@@ -94,69 +97,126 @@ export default function AddMemberScreen() {
 
   return (
     <div>
-      <form>
-        <img
-          src={
-            formData.imgData !== ''
-              ? `data:${formData.imgType};base64,${formData.imgData}`
-              : ''
-          }
-          alt="profile"
-        />
-        <button type="submit" onClick={onImageClick}>
-          Choose Image
-        </button>
-        <label>First Name</label>
-        <input
-          type="text"
-          value={formData.firstName}
-          name="firstName"
-          onChange={handleChange}
-        />
-        <label>Last Name</label>
-        <input
-          type="text"
-          value={formData.lastName}
-          name="lastName"
-          onChange={handleChange}
-        />
-        <label>Email</label>
-        <input
-          type="text"
-          value={formData.email}
-          name="email"
-          onChange={handleChange}
-        />
-        <label>Password</label>
-        <input
-          type="text"
-          value={formData.pass}
-          name="pass"
-          onChange={handleChange}
-        />
-        <label>Confirm Password</label>
-        <input
-          type="text"
-          value={formData.confirmPass}
-          name="confirmPass"
-          onChange={handleChange}
-        />
-        <label>Cell Nbr</label>
-        <input
-          type="text"
-          value={formData.cellNbr}
-          name="cellNbr"
-          onChange={handleChange}
-        />
-        <label>Role:</label>
-        <select name="role" onChange={handleChange}>
-          <option value="base_worker">Base Worker</option>
-          <option value="field_worker">Field Worker</option>
-          <option value="district_chief">District Chief</option>
-        </select>
-        <button type="submit" onClick={onSave}>
-          Register
-        </button>
+      <form className="main-form">
+        <table className="label-group">
+          <tbody>
+            <tr>
+              <td className="label-cell">
+                <label>First Name</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.firstName}
+                  name="firstName"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Last Name</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.lastName}
+                  name="lastName"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Email</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.email}
+                  name="email"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Password</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.pass}
+                  name="pass"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Confirm Password</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.confirmPass}
+                  name="confirmPass"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Cell Nbr</label>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={formData.cellNbr}
+                  name="cellNbr"
+                  onChange={handleChange}
+                  className="text-box"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Role:</label>
+              </td>
+              <td>
+                <select name="role" onChange={handleChange}>
+                  <option value="base_worker">Base Worker</option>
+                  <option value="field_worker">Field Worker</option>
+                  <option value="district_chief">District Chief</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div>
+          <div>
+            <img
+              src={
+                formData.imgData !== ''
+                  ? `data:${formData.imgType};base64,${formData.imgData}`
+                  : placeholder
+              }
+              alt="profile"
+              className="profile-pic"
+            />
+            <button type="submit" onClick={onImageClick}>
+              Choose Image
+            </button>
+          </div>
+          <button type="submit" onClick={onSave}>
+            Register
+          </button>
+        </div>
       </form>
     </div>
   );

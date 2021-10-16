@@ -167,7 +167,8 @@ class MWorker extends Parse.Object {
   }
 
   getImgURL() {
-    return this.get('image_file').url();
+    if (this.get('image_file')) return this.get('image_file').url();
+    return '';
   }
 
   setImg(base64Img: string, imgName: string) {
