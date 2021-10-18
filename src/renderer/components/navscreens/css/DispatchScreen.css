@@ -1,0 +1,40 @@
+.map {
+  height: 60vh;
+  width: 80vh;
+  margin: 2em;
+  border-radius: 2%;
+}
+
+.ReactModalPortal {
+  z-index: 2000;
+}
+
+.ReactModal__Content {
+  width: 60vw;
+  height: 60vh;
+  margin: auto;
+  border-style: none !important;
+  border-radius: 1em !important;
+  filter: drop-shadow(0 0 1em #294C60);
+}
+
+.dispatch-layout {
+  display: flex;
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 100ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+  transform: scale(0.5);
+}
+

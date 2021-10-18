@@ -15,6 +15,10 @@ class District extends Parse.Object {
     this.set('location', loc);
   }
 
+  getLoc() {
+    return this.get('location');
+  }
+
   static createDistrict(
     name: string,
     loc: { longitude: number; latitude: number }
@@ -98,24 +102,62 @@ class Mission extends Parse.Object {
     super('Mission');
   }
 
+  static getActiveMissions(): Promise<Array<Mission>> {
+    return Parse.Cloud.run('getActiveMissions');
+  }
+
   static getCompletedMissions(): Promise<Array<Mission>> {
-    return new Parse.Query(Mission).equalTo('status', 'complete').find();
+    return new Parse.Query(Mission)
+      .equalTo('status', 'complete')
+      .includeAll()
+      .find();
   }
 
   static getByID(id: string): Promise<Mission> {
-    return new Parse.Query(Mission).equalTo('objectId', id).first();
+    return new Parse.Query(Mission)
+      .equalTo('objectId', id)
+      .includeAll()
+      .first();
   }
 
-  getBaseWorkers(): Promise<Array<MWorker>> {
-    return this.relation('base_workers').query().find();
+  getBaseWorkers(): Array<MWorker> {
+    return this.get('base_workers');
   }
 
-  getFieldWorkers(): Promise<Array<MWorker>> {
-    return this.relation('field_workers').query().find();
+  getFieldWorkers(): Array<MWorker> {
+    return this.get('field_workers');
   }
 
-  getPatients(): Promise<Array<Parse.Object>> {
-    return this.relation('patients').query().find();
+  getPatients(): Array<Parse.Object> {
+    return this.get('patients');
+  }
+
+  addBaseWorker(worker: MWorker) {
+    this.add('base_workers', worker);
+  }
+
+  addFieldWorker(worker: MWorker) {
+    this.add('field_workers', worker);
+  }
+
+  addPatient(patient: Parse.Object) {
+    this.add('patients', patient);
+  }
+
+  getLocation() {
+    this.get('location');
+  }
+
+  setLocation(loc: Parse.GeoPoint) {
+    this.set('location', loc);
+  }
+
+  setInitialDesc(desc: string) {
+    this.set('initial_description', desc);
+  }
+
+  getInitialDesc(): string {
+    return this.get('initial_description');
   }
 }
 

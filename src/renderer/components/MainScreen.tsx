@@ -53,7 +53,7 @@ export default function MainScreen() {
     } else if (location.pathname !== '/admin') history.push('/');
   }, [location]);
 
-  let finalImg = imgUrl !== '' ? imgUrl : placeholder;
+  const finalImg = imgUrl !== '' ? imgUrl : placeholder;
 
   return (
     <div className="main-div">
