@@ -21,10 +21,10 @@ class District extends Parse.Object {
 
   static createDistrict(
     name: string,
-    loc: { longitude: number; latitude: number }
+    loc: { lng: number; lat: number }
   ): Promise<District> {
     const district = new District();
-    const pt = new Parse.GeoPoint(loc);
+    const pt = new Parse.GeoPoint({ latitude: loc.lat, longitude: loc.lng });
     district.setName(name);
     district.setLoc(pt);
     return district.save();

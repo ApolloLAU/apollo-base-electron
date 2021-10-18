@@ -1,15 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { useHistory } from 'react-router';
 import { District, MWorker, API } from 'renderer/api/API';
 import { Parse } from 'parse';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import './css/AdminScreen.css';
+
+const center = {
+  lat: 34.12354711152072,
+  lng: 35.65370044083664,
+};
+
+function DraggableMarker({position, setPosition}) {
+  const [draggable, setDraggable] = useState(false);
+  const markerRef = useRef(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    []
+  );
+
+  const toggleDraggable = useCallback(() => {
+    setDraggable((d) => !d);
+  }, []);
+
+  return (
+    <Marker
+      draggable={draggable}
+      eventHandlers={eventHandlers}
+      position={position}
+      ref={markerRef}
+    >
+      <Popup minWidth={90}>
+        <span onClick={toggleDraggable}>
+          {draggable
+            ? 'Marker is draggable'
+            : 'Click here to make marker draggable'}
+        </span>
+      </Popup>
+    </Marker>
+  );
+}
 
 export default function AdminScreen() {
   const history = useHistory();
-  const [location, setDistrictLocation] = useState({
-    latitude: 0.0,
-    longitude: 0.0,
-  }); // todo: need a map or smth to select
+  const [location, setDistrictLocation] = useState(center); // todo: need a map or smth to select
   const [formState, setFormState] = useState({
     imgData: '',
     imgType: '',
@@ -98,16 +144,15 @@ export default function AdminScreen() {
   return (
     <div>
       <h1>Create District</h1>
-      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+      <MapContainer center={center} zoom={13} scrollWheelZoom>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+        <DraggableMarker
+          position={location}
+          setPosition={setDistrictLocation}
+        />
       </MapContainer>
       <form>
         <img
