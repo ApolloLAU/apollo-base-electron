@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API, Mission } from 'renderer/api/API';
 
 export default function CurrentMissionScreen() {
-  const [currentMission, setCurrentMission] = useState(undefined);
+  const [currentMission, setCurrentMission] = useState(null);
 
-  return currentMission !== undefined ? (
+  useEffect(() => {
+    API.getWorkerForUser(API.getLoggedInUser())
+      .then((currentWorker) => Mission.getWorkerActiveMission(currentWorker))
+      .then((cMission) => setCurrentMission(cMission));
+  }, []);
+
+  return currentMission !== null ? (
     <div>
       <h1>Current Mission</h1>
     </div>

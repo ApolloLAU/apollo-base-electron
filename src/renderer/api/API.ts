@@ -2,6 +2,127 @@ import * as Parse from 'parse';
 
 const parse = require('parse');
 
+class Patient extends Parse.Object {
+  // first name
+  // last name
+  // home address
+  // current loc?
+  // cell nb
+  // dob
+  // blood type
+  // height
+  // weight
+  // allergies
+  // previous medical conditions?
+
+  constructor() {
+    super('Patient');
+  }
+
+  static createEmptyPatient() {
+    const p = new Patient();
+    p.setFirstName('');
+    p.setHeight(-1.0);
+    p.setHomeAddress('');
+    p.setAllergies('');
+    p.setBloodType('');
+    p.setPrevConditions('');
+    p.setCellNbr('');
+    p.setDOB(new Date(0));
+    p.setLastName('');
+    p.setWeight(-1.0);
+    return p;
+  }
+
+  static getAllPatients(): Promise<Array<Patient>> {
+    return new Parse.Query(Patient).find();
+  }
+
+  getFirstName(): string {
+    return this.get('first_name');
+  }
+
+  setFirstName(name: string) {
+    this.set('first_name', name);
+  }
+
+  getLastName(): string {
+    return this.get('last_name');
+  }
+
+  setLastName(name: string) {
+    this.set('first_name', name);
+  }
+
+  getHomeAddress(): string {
+    return this.get('address');
+  }
+
+  setHomeAddress(addr: string) {
+    this.set('address', addr);
+  }
+
+  getCellNbr() {
+    return this.get('phoneNb');
+  }
+
+  setCellNbr(nbr: string) {
+    return this.set('phoneNb', nbr);
+  }
+
+  getDOB(): Date {
+    return this.get('dob');
+  }
+
+  setDOB(dob: Date) {
+    this.set('dob', dob);
+  }
+
+  getBloodType(): string {
+    return this.get('blood_type');
+  }
+
+  setBloodType(bloodType: string) {
+    this.set('blood_type', bloodType);
+  }
+
+  getHeight(): number {
+    return this.get('height');
+  }
+
+  setHeight(height: number) {
+    this.set('height', height);
+  }
+
+  getWeight(): number {
+    return this.get('weight');
+  }
+
+  setWeight(weight: number) {
+    this.set('weight', weight);
+  }
+
+  getAllergies(): string {
+    return this.get('allergies');
+  }
+
+  setAllergies(allergies: string) {
+    this.set('allergies', allergies);
+  }
+
+  getPrevConditions(): string {
+    return this.get('prev_conditions');
+  }
+
+  setPrevConditions(prevConditions: string) {
+    this.set('prev_conditions', prevConditions);
+  }
+
+  getFormattedName() {
+    return `${this.getFirstName()} ${this.getLastName()}`;
+  }
+}
+
 class District extends Parse.Object {
   constructor() {
     super('District');
@@ -104,7 +225,18 @@ class Mission extends Parse.Object {
     super('Mission');
   }
 
-  static getActiveMissions(): Promise<Array<Mission>> {
+  static createDeployableMission(): Mission {
+    const m = new Mission();
+    m.set('base_workers', []);
+    m.set('field_workers', []);
+    m.set('patients', []);
+    m.setStatus('deployable');
+    m.setInitialDesc('');
+    m.setFinalDesc('');
+    return m;
+  }
+
+  static getDeployableMissions(): Promise<Array<Mission>> {
     return Parse.Cloud.run('getActiveMissions');
   }
 
@@ -122,6 +254,21 @@ class Mission extends Parse.Object {
       .first();
   }
 
+  static getWorkerActiveMission(
+    currentWorker: Worker
+  ): Promise<Mission | null> {
+    return new Parse.Query(Mission)
+      .equalTo('status', 'active')
+      .equalTo('base_workers', currentWorker)
+      .find()
+      .then((missions: Array<Mission>) => {
+        if (missions.length !== 0) {
+          return missions[0];
+        }
+        return null;
+      });
+  }
+
   getBaseWorkers(): Array<MWorker> {
     return this.get('base_workers');
   }
@@ -130,7 +277,7 @@ class Mission extends Parse.Object {
     return this.get('field_workers');
   }
 
-  getPatients(): Array<Parse.Object> {
+  getPatients(): Array<Patient> {
     return this.get('patients');
   }
 
@@ -142,7 +289,7 @@ class Mission extends Parse.Object {
     this.add('field_workers', worker);
   }
 
-  addPatient(patient: Parse.Object) {
+  addPatient(patient: string | Patient) {
     this.add('patients', patient);
   }
 
@@ -160,6 +307,41 @@ class Mission extends Parse.Object {
 
   getInitialDesc(): string {
     return this.get('initial_description');
+  }
+
+  setFinalDesc(desc: string) {
+    this.set('final_description', desc);
+  }
+
+  getFinallDesc(): string {
+    return this.get('final_description');
+  }
+
+  setFormattedLocation(l: string) {
+    this.set('formatted_loc', l);
+  }
+
+  getFormattedLocation() {
+    return this.get('formatted_loc');
+  }
+
+  setStatus(status: string) {
+    this.set('status', status);
+  }
+
+  getStatus(): string {
+    return this.get('status');
+  }
+
+  formatPatientNames() {
+    const patients = this.getPatients();
+    if (patients.length === 1) {
+      return patients[0].getFormattedName();
+    }
+    if (patients.length > 1) {
+      return 'Multiple Patients';
+    }
+    return 'No patients';
   }
 }
 
@@ -281,6 +463,7 @@ class API {
     Parse.Object.registerSubclass('ChatMessage', ChatMessage);
     Parse.Object.registerSubclass('MedicalData', MedicalDataPt);
     Parse.Object.registerSubclass('District', District);
+    Parse.Object.registerSubclass('Patient', Patient);
     console.log('API Initialized');
   }
 
@@ -312,4 +495,4 @@ class API {
   }
 }
 
-export { API, MWorker, Mission, ChatMessage, MedicalDataPt, District };
+export { API, MWorker, Mission, ChatMessage, MedicalDataPt, District, Patient };

@@ -1,8 +1,7 @@
 .map {
   height: 60vh;
-  width: 80vh;
   margin: 2em;
-  border-radius: 2%;
+  border-radius: 20px;
 }
 
 .ReactModalPortal {
@@ -20,6 +19,7 @@
 
 .dispatch-layout {
   display: flex;
+  flex-direction: column;
 }
 
 .ReactModal__Overlay {

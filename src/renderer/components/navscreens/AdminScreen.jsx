@@ -9,14 +9,14 @@ import { useHistory } from 'react-router';
 import { District, MWorker, API } from 'renderer/api/API';
 import { Parse } from 'parse';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import './css/AdminScreen.css';
+import styles from './css/AdminScreen.module.css';
 
 const center = {
   lat: 34.12354711152072,
   lng: 35.65370044083664,
 };
 
-function DraggableMarker({position, setPosition}) {
+function DraggableMarker({ position, setPosition }) {
   const [draggable, setDraggable] = useState(false);
   const markerRef = useRef(null);
   const eventHandlers = useMemo(
@@ -43,7 +43,12 @@ function DraggableMarker({position, setPosition}) {
       ref={markerRef}
     >
       <Popup minWidth={90}>
-        <span onClick={toggleDraggable}>
+        <span
+          role="button"
+          onClick={toggleDraggable}
+          onKeyDown={toggleDraggable}
+          tabIndex={0}
+        >
           {draggable
             ? 'Marker is draggable'
             : 'Click here to make marker draggable'}
@@ -144,7 +149,12 @@ export default function AdminScreen() {
   return (
     <div>
       <h1>Create District</h1>
-      <MapContainer center={center} zoom={13} scrollWheelZoom>
+      <MapContainer
+        center={center}
+        zoom={13}
+        scrollWheelZoom
+        className={styles.adminmap}
+      >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

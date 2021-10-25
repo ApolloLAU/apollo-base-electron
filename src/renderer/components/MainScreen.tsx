@@ -14,6 +14,7 @@ import DispatchScreen from './navscreens/DispatchScreen';
 import './css/MainScreen.css';
 
 import placeholder from '../../../assets/empty-profile-picture.png';
+import DeployMissionScreen from './subscreens/DeployMissionScreen';
 
 export default function MainScreen() {
   const history = useHistory();
@@ -37,6 +38,9 @@ export default function MainScreen() {
     }
     if (url.includes('team')) {
       return 'Team Records';
+    }
+    if (url.includes('deploy')) {
+      return 'Deploy Team';
     }
     return 'Add Team Member';
   };
@@ -80,6 +84,7 @@ export default function MainScreen() {
           <Route path="/main/add_member" component={AddMemberScreen} />
           <Route path="/main/mission" component={CurrentMissionScreen} />
           <Route path="/main/dispatch" component={DispatchScreen} />
+          <Route path="/main/deploy/:id" component={DeployMissionScreen} />
         </Switch>
       </div>
     </div>
