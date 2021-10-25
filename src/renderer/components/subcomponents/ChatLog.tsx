@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChatMessage } from 'renderer/api/API';
 
 type ChatLogProps = {

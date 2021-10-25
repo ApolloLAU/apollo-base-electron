@@ -1,13 +1,8 @@
 import path from 'path';
 import { execSync } from 'child_process';
 import fs from 'fs';
-<<<<<<< HEAD
-import { dependencies } from '../../build/app/package.json';
-import webpackPaths from '../configs/webpack.paths.js';
-=======
 import { dependencies } from '../../release/app/package.json';
 import webpackPaths from '../configs/webpack.paths';
->>>>>>> template/main
 
 if (
   Object.keys(dependencies || {}).length > 0 &&

@@ -13,6 +13,8 @@ module.exports = {
     'react/no-array-index-key': 'off',
     'react/prop-types': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

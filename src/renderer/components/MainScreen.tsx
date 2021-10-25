@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import NavigationMenu from './subcomponents/NavigationMenu';
@@ -47,8 +47,10 @@ export default function MainScreen() {
     console.log(location.pathname);
     if (user) {
       API.getWorkerForUser(user).then((r) => {
-        setRole(r.getRole());
-        setImgUrl(r.getImgURL());
+        if (r) {
+          setRole(r.getRole());
+          setImgUrl(r.getImgURL());
+        }
       });
     } else if (location.pathname !== '/admin') history.push('/');
   }, [location]);

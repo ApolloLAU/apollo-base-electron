@@ -35,7 +35,7 @@ let mainWindow: BrowserWindow | null = null;
 //   console.log(msgTemplate(arg));
 //   event.reply('ipc-example', msgTemplate('pong'));
 // });
-ipcMain.handle('chooseImage', (event, arg) => {
+ipcMain.handle('chooseImage', (_event, _arg) => {
   console.log('opening electron dialog!');
   const filePaths = dialog.showOpenDialogSync({
     title: 'Choose an Image',

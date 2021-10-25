@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Parse } from 'parse';
+import * as Parse from 'parse';
+
+const parse = require('parse');
 
 class District extends Parse.Object {
   constructor() {
@@ -64,6 +64,8 @@ class MedicalDataPt extends Parse.Object {
 }
 
 class ChatMessage extends Parse.Object {
+  createdAt: any;
+
   constructor() {
     super('ChatMessage');
   }
@@ -113,7 +115,7 @@ class Mission extends Parse.Object {
       .find();
   }
 
-  static getByID(id: string): Promise<Mission> {
+  static getByID(id: string): Promise<Mission | undefined> {
     return new Parse.Query(Mission)
       .equalTo('objectId', id)
       .includeAll()
@@ -188,7 +190,7 @@ class MWorker extends Parse.Object {
     return this.getWorkersWithRole('base_worker', district);
   }
 
-  static getById(id: string): Promise<MWorker> {
+  static getById(id: string): Promise<MWorker | undefined> {
     return new Parse.Query(MWorker).equalTo('objectId', id).first();
   }
 
@@ -234,12 +236,13 @@ class MWorker extends Parse.Object {
     return this.set('user_id', id);
   }
 
-  getUsername(): Promise<string> {
+  getUsername(): Promise<string | undefined> {
     return new Parse.Query(Parse.User)
       .equalTo('objectId', this.getUserID())
       .first()
-      .then((user: Parse.User) => {
-        return user.getUsername();
+      .then((user: Parse.User | undefined) => {
+        if (user) return user.getUsername();
+        return '';
       });
   }
 
@@ -271,7 +274,7 @@ class MWorker extends Parse.Object {
 class API {
   static initAPI() {
     Parse.initialize('frsAppID');
-    Parse.serverURL = 'http://localhost:1337/parse';
+    parse.serverURL = 'http://localhost:1337/parse';
 
     Parse.Object.registerSubclass('Worker', MWorker);
     Parse.Object.registerSubclass('Mission', Mission);
@@ -281,7 +284,7 @@ class API {
     console.log('API Initialized');
   }
 
-  static getWorkerForUser(user: Parse.User): Promise<MWorker> {
+  static getWorkerForUser(user: Parse.User): Promise<MWorker | undefined> {
     return new Parse.Query(MWorker).equalTo('user_id', user.id).first();
   }
 
@@ -290,17 +293,20 @@ class API {
     return Parse.User.logIn(username, pass);
   }
 
-  static getLoggedInUser(): Parse.User | null {
+  static getLoggedInUser(): Parse.User | undefined {
     return Parse.User.current();
   }
 
   static logOut() {
     const currentUser = API.getLoggedInUser();
     if (!currentUser) return Promise.resolve();
-    return API.getWorkerForUser(API.getLoggedInUser())
+    return API.getWorkerForUser(currentUser)
       .then((worker) => {
-        worker.setStatus('offline');
-        return worker.save();
+        if (worker) {
+          worker.setStatus('offline');
+          return worker.save();
+        }
+        throw new Error('Worker was undefined');
       })
       .then(() => Parse.User.logOut());
   }

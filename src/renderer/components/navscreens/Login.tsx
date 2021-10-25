@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useHistory } from 'react-router';
 import icon from '../../../../assets/FRSLogo.png';
 import './css/Login.css';
@@ -36,11 +36,14 @@ export default function Login() {
           return API.getWorkerForUser(user);
         })
         .then(async (w) => {
-          if (w.getRole() !== 'field_worker') {
-            w.setStatus('online');
-            await w.save();
+          if (w) {
+            if (w.getRole() !== 'field_worker') {
+              w.setStatus('online');
+              await w.save();
+            }
+            return w.getRole();
           }
-          return w.getRole();
+          throw new Error('Could not find worker');
         })
         .then((role) => {
           if (role === 'field_worker') {
