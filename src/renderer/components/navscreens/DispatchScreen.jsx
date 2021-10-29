@@ -3,9 +3,13 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import Modal from 'react-modal';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import { Parse } from 'parse';
+import L from 'leaflet';
+import { useHistory } from 'react-router';
 import styles from './css/DispatchScreen.module.css';
 import { API, Mission, Patient } from '../../api/API';
 import MissionCard from '../subcomponents/MissionCard';
+
+import redMarker from '../../../../assets/marker.png';
 
 const opencage = require('opencage-api-client');
 
@@ -20,6 +24,7 @@ function MapInteractionComponent({ onClick }) {
 }
 
 export default function DispatchScreen() {
+  const history = useHistory();
   const [districtLoc, setDistrictLoc] = useState(undefined);
   const [deployableMissions, setDeployableMissions] = useState([]);
   const [missionCreateOptions, setMissionCreateOptions] = useState({
@@ -29,6 +34,17 @@ export default function DispatchScreen() {
     selectedPatients: [],
   });
   const unknownPatientName = 'UNKNOWN'; // FIXME: do we want something else?
+  const getMissionLoc = (m) => m.get('location');
+  const RedMarker = new L.Icon({
+    iconUrl: redMarker,
+    iconRetinaUrl: redMarker,
+    iconAnchor: [12, 32],
+    popupAnchor: null,
+    shadowUrl: null,
+    shadowSize: null,
+    shadowAnchor: null,
+    iconSize: new L.Point(24, 32),
+  });
 
   const onMapRClick = (latLng) => {
     console.log('Right clicked here:', latLng);
@@ -72,15 +88,18 @@ export default function DispatchScreen() {
   };
 
   // this is not tested!!!
-  const getCardForMission = (mission) => (
-    <MissionCard
-      key={mission.id}
-      missionID={mission.id}
-      missionDate={mission.createdAt}
-      missionLocation={mission.getFormattedLocation()}
-      patientName={mission.formatPatientNames()}
-    />
-  );
+  const getCardForMission = (mission) => {
+    return (
+      <MissionCard
+        key={mission.id}
+        missionID={mission.id}
+        missionDate={mission.createdAt}
+        missionLocation={mission.getFormattedLocation()}
+        patientName={mission.formatPatientNames()}
+        onClck={() => history.push(`/main/deploy/${mission.id}`)}
+      />
+    );
+  };
 
   const getPatientList = () =>
     Patient.getAllPatients()
@@ -175,6 +194,14 @@ export default function DispatchScreen() {
     );
   };
 
+  const getMarkerForMission = (m) => {
+    const loc = getMissionLoc(m);
+    return (
+      // eslint-disable-next-line no-underscore-dangle
+      <Marker position={[loc._latitude, loc._longitude]} icon={RedMarker} />
+    );
+  };
+
   if (districtLoc) {
     return (
       <div>
@@ -212,6 +239,7 @@ export default function DispatchScreen() {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <MapInteractionComponent onClick={onMapRClick} />
+            {deployableMissions.map((m) => getMarkerForMission(m))}
           </MapContainer>
           <div>
             <h2>Missions</h2>

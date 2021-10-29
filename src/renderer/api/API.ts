@@ -350,14 +350,20 @@ class MWorker extends Parse.Object {
     super('Worker');
   }
 
+  static getWorkerQueryForRole(
+    role: string,
+    district: District
+  ): Parse.Query<MWorker> {
+    return new Parse.Query(MWorker)
+      .equalTo('role', role)
+      .equalTo('district', district);
+  }
+
   private static getWorkersWithRole(
     role: string,
     district: District
   ): Promise<Array<MWorker>> {
-    return new Parse.Query(MWorker)
-      .equalTo('role', role)
-      .equalTo('district', district)
-      .find();
+    return this.getWorkerQueryForRole(role, district).find();
   }
 
   static getDistrictChiefs(district: District): Promise<Array<MWorker>> {
@@ -366,6 +372,10 @@ class MWorker extends Parse.Object {
 
   static getFieldWorkers(district: District): Promise<Array<MWorker>> {
     return this.getWorkersWithRole('field_responder', district);
+  }
+
+  static getFieldWorkerQuery(district: District): Parse.Query<MWorker> {
+    return this.getWorkerQueryForRole('field_responder', district);
   }
 
   static getBaseWorkers(district: District): Promise<Array<MWorker>> {
