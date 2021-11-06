@@ -1,0 +1,64 @@
+.missionArea {
+  display: flex;
+}
+
+.sideBar {
+  flex: 1 0;
+}
+
+.upperArea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 3 0;
+}
+
+.innerArea {
+  display: flex;
+  flex: 1 0 40%;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.innerAreaRow {
+  flex-direction: row;
+}
+
+.label {
+  color: #294C60;
+  font-weight: bold;
+  font-size: 20px;
+  max-width: 5rem;
+  text-wrap: normal;
+  padding-right: 2rem;
+}
+
+.details {
+  font-size: 20px;
+  margin: 0;
+  max-width: 25rem;
+  text-wrap: normal;
+  padding-right: 2rem;
+}
+
+.requestButton {
+  background: #550c18;
+  border: none !important;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+  height: 3rem;
+  margin-right: 2rem;
+  margin-top: 1rem;
+  max-width: 10rem;
+  flex: 1 0 50%;
+}
+
+.updateButton {
+  background: #294C60;
+  border: none !important;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+  height: 3rem;
+}

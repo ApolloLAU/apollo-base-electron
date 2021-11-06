@@ -23,9 +23,9 @@ export default function PastMissionScreen() {
 
   useEffect(() => {
     Mission.getByID(id).then(async (m) => {
-      setPatients(await m.getPatients());
-      setBaseWorkers(await m.getBaseWorkers());
-      setFieldWorkers(await m.getFieldWorkers());
+      setPatients(m.getPatients());
+      setBaseWorkers(m.getBaseWorkers());
+      setFieldWorkers(m.getFieldWorkers());
       setDataPoints(await MedicalDataPt.getMedicalDataForMission(id));
       setMessages(await ChatMessage.getMessagesForMissionId(id));
     });

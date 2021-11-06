@@ -1,0 +1,36 @@
+.missionInfo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.infoArea {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  width: 50%;
+  max-width: 50%;
+  min-width: 20rem;
+  margin-top: 1rem;
+  justify-content: space-between;
+}
+
+.infoLabel {
+  margin: 1rem;
+  font-size: 20px;
+}
+
+.idInput {
+  height: 2rem;
+  padding-left: 1rem;
+  font-size: 16px;
+}
+
+.descArea {
+  height: 6rem;
+  padding: 1rem;
+  resize: none;
+  min-width: 20rem;
+}
+
+

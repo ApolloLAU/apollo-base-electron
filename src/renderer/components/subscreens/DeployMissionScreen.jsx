@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { API, Mission, MWorker } from '../../api/API';
 
+import styles from './css/DeployMission.module.css';
+import SelectableWorkerCard from '../subcomponents/SelectableWorkerCard';
+
 export default function DeployMissionScreen() {
   const { id } = useParams();
   const [currentMission, setCurrentMission] = useState(undefined);
   const [fieldWorkers, setFieldWorkers] = useState([]);
   const [subscription, setSubscription] = useState(undefined);
+  const [selectedWorkers, setSelectedWorkers] = useState([]);
+  const [initialInfo, setInitialInfo] = useState('');
 
   useEffect(() => {
     Mission.getByID(id)
@@ -27,8 +32,8 @@ export default function DeployMissionScreen() {
           const query = MWorker.getFieldWorkerQuery(d);
           return query;
         })
-        .then((q) => {
-          q.find().then((workers) => setFieldWorkers(workers));
+        .then(async (q) => {
+          await q.find().then((workers) => setFieldWorkers(workers));
           return q.subscribe();
         })
         .then((sub) => setSubscription(sub));
@@ -38,7 +43,7 @@ export default function DeployMissionScreen() {
   useEffect(() => {
     if (subscription) {
       subscription.on('update', (w) => {
-        console.log(w); // FIXME: update the field workers list.
+        setFieldWorkers([...fieldWorkers.filter((w2) => w2.id !== w.id), w]);
       });
     }
     return () => {
@@ -50,42 +55,82 @@ export default function DeployMissionScreen() {
     return <div />;
   }
 
+  const onTextEntered = (e) => {
+    setInitialInfo(e.target.value);
+  };
+
+  const onWorkerClicked = (worker) => {
+    return (isSelected) => {
+      const foundWorker = selectedWorkers.find((w) => w.id === worker.id);
+      if (foundWorker !== undefined || !isSelected) {
+        setSelectedWorkers([
+          selectedWorkers.filter((w) => w.id !== foundWorker),
+        ]);
+      } else if (isSelected) {
+        setSelectedWorkers([...selectedWorkers, worker]);
+      }
+    };
+  };
+
+  const onDeployMission = (e) => {
+    e.preventDefault();
+
+    if (currentMission && selectedWorkers.length > 0) {
+      selectedWorkers.forEach((worker) => {
+        worker.setStatus('busy');
+        currentMission.addFieldWorker(worker);
+      });
+      const user = API.getLoggedInUser();
+      if (user) {
+        API.getWorkerForUser(user).then((w) => {
+          currentMission.addBaseWorker(w);
+          currentMission.setInitialDesc(initialInfo);
+          return currentMission.save();
+        });
+      }
+    }
+  };
+
   return (
     <div>
-      <form>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <label>Mission ID</label>
-              </td>
-              <td>
-                <input disabled type="text" value={id} />
-              </td>
-              <td rowSpan={2}>
-                <label>Initial Description</label>
-              </td>
-              <td rowSpan={2}>
-                <textarea type="text" style={{ resize: 'none' }} />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>Patients:</label>
-              </td>
-              <td>
-                <p>{currentMission.formatPatientNames()}</p>
-                <button type="button">Edit Patient Information</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
+      <div className={styles.missionInfo}>
+        <div className={styles.infoArea}>
+          <label className={styles.infoLabel}>Mission ID</label>
+          <input disabled type="text" value={id} className={styles.idInput} />
+        </div>
+        <div className={styles.infoArea}>
+          <label className={styles.infoLabel}>Patients:</label>
+          <div>
+            <p>{currentMission.formatPatientNames()}</p>
+            <button type="button">Edit Patient Information</button>
+          </div>
+        </div>
+        <div className={styles.infoArea}>
+          <label className={styles.infoLabel}>Initial Description</label>
+          <textarea
+            className={styles.descArea}
+            value={initialInfo}
+            onChange={onTextEntered}
+          />
+        </div>
+      </div>
       <div>
         <h2>Field Team Members</h2>
-        <div />
+        <div>
+          {fieldWorkers.map((f) => (
+            <SelectableWorkerCard
+              imgSrc={f.getImgURL() !== '' ? f.getImgURL() : undefined}
+              name={f.getFormattedName()}
+              status={f.getStatus()}
+              setSelected={onWorkerClicked(f)}
+              isSelected={selectedWorkers.includes(f)}
+            />
+          ))}
+        </div>
       </div>
-      <button type="button">Deploy</button>
+      <button type="button" onClick={onDeployMission}>
+        Deploy
+      </button>
     </div>
   );
 }

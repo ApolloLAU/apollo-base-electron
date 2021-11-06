@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
+import React, {useEffect, useState} from 'react';
+import {MapContainer, Marker, TileLayer, useMapEvents} from 'react-leaflet';
 import Modal from 'react-modal';
 import AsyncCreatableSelect from 'react-select/async-creatable';
-import { Parse } from 'parse';
+import {Parse} from 'parse';
 import L from 'leaflet';
-import { useHistory } from 'react-router';
+import {useHistory} from 'react-router';
 import styles from './css/DispatchScreen.module.css';
-import { API, Mission, Patient } from '../../api/API';
+import {API, Mission, Patient} from '../../api/API';
 import MissionCard from '../subcomponents/MissionCard';
 
 import redMarker from '../../../../assets/marker.png';
@@ -89,6 +89,7 @@ export default function DispatchScreen() {
 
   // this is not tested!!!
   const getCardForMission = (mission) => {
+    console.log(mission);
     return (
       <MissionCard
         key={mission.id}
@@ -138,13 +139,21 @@ export default function DispatchScreen() {
         console.log(district.getLoc());
         setDistrictLoc(district.getLoc());
       });
-    Mission.getDeployableMissions().then((missions) => {
-      console.log('got missions', missions);
-      const missionObjs = missions.map((m) =>
-        Mission.fromJSON({ ...m, className: 'Mission' })
-      );
-      setDeployableMissions(missionObjs);
-    });
+    Mission.getDeployableMissions()
+      .then((missions) => {
+        console.log('got missions', missions);
+        return missions.map((m) =>
+          Mission.fromJSON({ ...m, className: 'Mission' })
+        );
+      })
+      .then(async (parseMissions) => {
+        console.log('parseMissions', parseMissions);
+        await Promise.all(parseMissions.map((p) => p.fetch()));
+
+        // for each mission, actually fetch the patients. la2anno they aren't being fetched.
+        // then can use the correct ones.
+        setDeployableMissions(parseMissions);
+      });
   }, []);
 
   const createMission = (e) => {
@@ -210,6 +219,7 @@ export default function DispatchScreen() {
           onRequestClose={onCloseMissionCreation}
           ariaHideApp={false}
           closeTimeoutMS={100}
+          className={styles.myModal}
         >
           <h1>Deploy New Mission</h1>
           <p>Location:&emsp;{getLocText()}</p>

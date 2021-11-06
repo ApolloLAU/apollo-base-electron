@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChatMessage } from 'renderer/api/API';
 
 type ChatLogProps = {
   isActive: boolean;
   messages: ChatMessage[];
+  onSend: React.MouseEventHandler<HTMLButtonElement>;
+  chatValue: string;
+  setChatValue: (arg0: string) => void;
 };
 
 type ChatMessageProps = {
@@ -29,7 +32,16 @@ function ChatMessageComponent({ message }: ChatMessageProps) {
   );
 }
 
-export default function ChatLog({ isActive, messages }: ChatLogProps) {
+export default function ChatLog({
+  isActive,
+  messages,
+  onSend,
+  chatValue,
+  setChatValue,
+}: ChatLogProps) {
+  const onValChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setChatValue(evt.target.value);
+  };
   return (
     <div>
       <div>
@@ -39,8 +51,10 @@ export default function ChatLog({ isActive, messages }: ChatLogProps) {
       </div>
       {isActive ? (
         <div>
-          <input type="text" />
-          <button type="submit">Send</button>
+          <input type="text" value={chatValue} onChange={onValChange} />
+          <button type="submit" onClick={onSend}>
+            Send
+          </button>
         </div>
       ) : (
         <div />

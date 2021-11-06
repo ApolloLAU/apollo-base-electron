@@ -119,7 +119,7 @@ class Patient extends Parse.Object {
   }
 
   getFormattedName() {
-    return `${this.getFirstName()} ${this.getLastName()}`;
+    return `${this.getFirstName() || ''} ${this.getLastName() || ''}`;
   }
 }
 
@@ -189,15 +189,26 @@ class ChatMessage extends Parse.Object {
 
   constructor() {
     super('ChatMessage');
+    this.setMessage('');
+    this.set('image', undefined);
+  }
+
+  static getMessageForMissionQuery(
+    missionId: string
+  ): Parse.Query<ChatMessage> {
+    return new Parse.Query(ChatMessage)
+      .equalTo('for_mission', missionId)
+      .ascending('createdAt');
   }
 
   static getMessagesForMissionId(
-    misionId: string
+    missionId: string
   ): Promise<Array<ChatMessage>> {
-    return new Parse.Query(ChatMessage)
-      .equalTo('for_mission', misionId)
-      .ascending('createdAt')
-      .find();
+    return this.getMessageForMissionQuery(missionId).find();
+  }
+
+  setSender(w: MWorker) {
+    this.set('sender', w);
   }
 
   getSender(): MWorker {
@@ -207,6 +218,14 @@ class ChatMessage extends Parse.Object {
   isSenderBase(): boolean {
     // todo: maybe make this better?
     return this.getSender().getRole() === 'base_worker';
+  }
+
+  setMission(missionId: string) {
+    this.set('for_mission', missionId);
+  }
+
+  setMessage(msg: string) {
+    this.set('message', msg);
   }
 
   getMessage() {
@@ -262,6 +281,7 @@ class Mission extends Parse.Object {
       .equalTo('base_workers', currentWorker)
       .find()
       .then((missions: Array<Mission>) => {
+        console.log('active missions:', missions);
         if (missions.length !== 0) {
           return missions[0];
         }
@@ -335,6 +355,7 @@ class Mission extends Parse.Object {
 
   formatPatientNames() {
     const patients = this.getPatients();
+    console.log('patients:', patients);
     if (patients.length === 1) {
       return patients[0].getFormattedName();
     }
@@ -371,11 +392,11 @@ class MWorker extends Parse.Object {
   }
 
   static getFieldWorkers(district: District): Promise<Array<MWorker>> {
-    return this.getWorkersWithRole('field_responder', district);
+    return this.getWorkersWithRole('field_worker', district);
   }
 
   static getFieldWorkerQuery(district: District): Parse.Query<MWorker> {
-    return this.getWorkerQueryForRole('field_responder', district);
+    return this.getWorkerQueryForRole('field_worker', district);
   }
 
   static getBaseWorkers(district: District): Promise<Array<MWorker>> {
@@ -384,6 +405,10 @@ class MWorker extends Parse.Object {
 
   static getById(id: string): Promise<MWorker | undefined> {
     return new Parse.Query(MWorker).equalTo('objectId', id).first();
+  }
+
+  getFormattedName(): string {
+    return `${this.getFirstName()} ${this.getLastName()}`;
   }
 
   getFirstName() {
