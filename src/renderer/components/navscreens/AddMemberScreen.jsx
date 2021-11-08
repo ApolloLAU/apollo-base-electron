@@ -189,7 +189,7 @@ export default function AddMemberScreen() {
                 <label>Role:</label>
               </td>
               <td>
-                <select name="role" onChange={handleChange}>
+                <select name="role" onChange={handleChange} value={formData.role}>
                   <option value="base_worker">Base Worker</option>
                   <option value="field_worker">Field Worker</option>
                   <option value="district_chief">District Chief</option>

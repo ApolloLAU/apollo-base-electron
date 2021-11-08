@@ -35,14 +35,14 @@ let mainWindow: BrowserWindow | null = null;
 //   console.log(msgTemplate(arg));
 //   event.reply('ipc-example', msgTemplate('pong'));
 // });
-ipcMain.handle('chooseImage', (_event, _arg) => {
+ipcMain.handle('chooseImage', async (_event, _arg) => {
   console.log('opening electron dialog!');
-  const filePaths = dialog.showOpenDialogSync({
+  const result = await dialog.showOpenDialog({
     title: 'Choose an Image',
     properties: ['openFile'],
     filters: [{ name: 'Images', extensions: ['png', 'jpeg', 'jpg'] }],
   });
-
+  const { filePaths } = result;
   if (filePaths && filePaths?.length > 0) {
     const buffer = fs.readFileSync(filePaths[0]).toString('base64');
     // console.log(base64);

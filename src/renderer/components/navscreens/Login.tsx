@@ -24,44 +24,46 @@ export default function Login() {
     evt.preventDefault();
     console.log(email, password);
     setLoginEnabled(false);
-    if (email === 'admin' && password === 'admin') {
-      // go to district creator!!
-      console.log('pushing admin');
-      setLoginEnabled(true);
-      history.push('/admin');
-    } else {
-      API.login(email, password)
-        .then((user) => {
-          console.log('User Logged In');
-          return API.getWorkerForUser(user);
-        })
-        .then(async (w) => {
-          if (w) {
-            if (w.getRole() !== 'field_worker') {
-              w.setStatus('online');
-              await w.save();
+    API.logOut().then(() => {
+      if (email === 'admin' && password === 'admin') {
+        // go to district creator!!
+        console.log('pushing admin');
+        setLoginEnabled(true);
+        history.push('/admin');
+      } else {
+        API.login(email, password)
+          .then((user) => {
+            console.log('User Logged In');
+            return API.getWorkerForUser(user);
+          })
+          .then(async (w) => {
+            if (w) {
+              if (w.getRole() !== 'field_worker') {
+                w.setStatus('online');
+                await w.save();
+              }
+              return w.getRole();
             }
-            return w.getRole();
-          }
-          throw new Error('Could not find worker');
-        })
-        .then((role) => {
-          if (role === 'field_worker') {
-            // todo: show role error
-          } else if (role === 'base_worker') {
+            throw new Error('Could not find worker');
+          })
+          .then((role) => {
+            if (role === 'field_worker') {
+              // todo: show role error
+            } else if (role === 'base_worker') {
+              setLoginEnabled(true);
+              history.push('/main/mission');
+            } else {
+              setLoginEnabled(true);
+              history.push('/main/team');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
             setLoginEnabled(true);
-            history.push('/main/mission');
-          } else {
-            setLoginEnabled(true);
-            history.push('/main/team');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoginEnabled(true);
-          // todo: FRONTEND - Show Login Error
-        });
-    }
+            // todo: FRONTEND - Show Login Error
+          });
+      }
+    });
   };
 
   return (

@@ -1,9 +1,16 @@
+.mainArea {
+  height: 75%;
+}
+
 .missionArea {
   display: flex;
+  height: 100%;
 }
 
 .sideBar {
   flex: 1 0;
+  min-width: 20%;
+  height: 100%;
 }
 
 .upperArea {

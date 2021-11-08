@@ -31,9 +31,7 @@ export default function HistoryScreen() {
             patientName={
               listOfPatientLists[ind].length > 1
                 ? 'Multiple Patients'
-                : `${listOfPatientLists[ind][0].get(
-                    'firstname'
-                  )} ${listOfPatientLists[ind][0].get('lastname')}`
+                : `${listOfPatientLists[ind][0].getFormattedName()}`
             }
             key={m.id}
           />

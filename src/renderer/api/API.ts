@@ -274,7 +274,7 @@ class Mission extends Parse.Object {
   }
 
   static getWorkerActiveMission(
-    currentWorker: Worker
+    currentWorker: MWorker
   ): Promise<Mission | null> {
     return new Parse.Query(Mission)
       .equalTo('status', 'active')
@@ -490,8 +490,10 @@ class MWorker extends Parse.Object {
 
 class API {
   static initAPI() {
+    // const apiUrl = 'https://apollo-frs-backend.herokuapp.com/parse'
+    const apiUrl = 'http://localhost:1337/parse';
     Parse.initialize('frsAppID');
-    parse.serverURL = 'http://localhost:1337/parse';
+    parse.serverURL = apiUrl;
 
     Parse.Object.registerSubclass('Worker', MWorker);
     Parse.Object.registerSubclass('Mission', Mission);
@@ -526,7 +528,8 @@ class API {
         }
         throw new Error('Worker was undefined');
       })
-      .then(() => Parse.User.logOut());
+      .then(() => Parse.User.logOut())
+      .catch(() => Parse.User.logOut());
   }
 }
 

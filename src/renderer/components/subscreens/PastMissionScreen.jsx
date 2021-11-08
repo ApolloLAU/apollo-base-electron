@@ -32,7 +32,7 @@ export default function PastMissionScreen() {
   }, []);
 
   const getName = (obj) => {
-    return `${obj.get('firstname')} ${obj.get('lastname')}`;
+    return `${obj.getFormattedName()}`;
   };
   // we may have multiple patients, so print each.
   return (
