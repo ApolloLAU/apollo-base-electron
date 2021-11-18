@@ -15,12 +15,15 @@ import './css/MainScreen.css';
 
 import placeholder from '../../../assets/empty-profile-picture.png';
 import DeployMissionScreen from './subscreens/DeployMissionScreen';
+import RecordsScreen from "./navscreens/RecordsScreen";
+import CivilianScreen from "./subscreens/CivilianScreen";
 
 export default function MainScreen() {
   const history = useHistory();
   const location = useLocation();
   const [role, setRole] = useState('');
   const [imgUrl, setImgUrl] = useState('');
+  const [name, setName] = useState('');
 
   const getHeader = () => {
     const url = location.pathname;
@@ -52,6 +55,7 @@ export default function MainScreen() {
     if (user) {
       API.getWorkerForUser(user).then((r) => {
         if (r) {
+          setName(r.getFormattedName());
           setRole(r.getRole());
           setImgUrl(r.getImgURL());
         }
@@ -71,7 +75,7 @@ export default function MainScreen() {
             <span className="logged-in-area">
               Logged in as
               <br />
-              <span className="profile-name">Peter Sakr</span>
+              <span className="profile-name">{name}</span>
             </span>
             <img src={finalImg} alt="profile" className="profile-pic" />
           </div>
@@ -85,6 +89,8 @@ export default function MainScreen() {
           <Route path="/main/mission" component={CurrentMissionScreen} />
           <Route path="/main/dispatch" component={DispatchScreen} />
           <Route path="/main/deploy/:id" component={DeployMissionScreen} />
+          <Route path="/main/records/:id" component={CivilianScreen} />
+          <Route path="/main/records" component={RecordsScreen} />
         </Switch>
       </div>
     </div>

@@ -26,12 +26,41 @@ class Patient extends Parse.Object {
     p.setHomeAddress('');
     p.setAllergies('');
     p.setBloodType('');
-    p.setPrevConditions('');
+    p.setPrevConditions(false);
     p.setCellNbr('');
     p.setDOB(new Date(0));
+    p.setEmergencyNbr('');
     p.setLastName('');
     p.setWeight(-1.0);
     return p;
+  }
+
+  getAbnormalities() {
+    return this.get('abnormalities') || [];
+  }
+
+  setAbnormalities(abns: []) {
+    this.set('abnormalities', abns);
+  }
+
+  static getById(id: string): Promise<Patient | undefined> {
+    return new Parse.Query(Patient).equalTo('objectId', id).first();
+  }
+
+  getSex(): string {
+    return this.get('sex');
+  }
+
+  setSex(sex: string) {
+    this.set('sex', sex);
+  }
+
+  getEmergencyNbr(): string {
+    return this.get('emergency_nbr');
+  }
+
+  setEmergencyNbr(nbr: string) {
+    this.set('emergency_nbr', nbr);
   }
 
   static getAllPatients(): Promise<Array<Patient>> {
@@ -110,11 +139,11 @@ class Patient extends Parse.Object {
     this.set('allergies', allergies);
   }
 
-  getPrevConditions(): string {
+  getPrevConditions(): boolean {
     return this.get('prev_conditions');
   }
 
-  setPrevConditions(prevConditions: string) {
+  setPrevConditions(prevConditions: boolean) {
     this.set('prev_conditions', prevConditions);
   }
 
@@ -185,8 +214,6 @@ class MedicalDataPt extends Parse.Object {
 }
 
 class ChatMessage extends Parse.Object {
-  createdAt: any;
-
   constructor() {
     super('ChatMessage');
     this.setMessage('');
@@ -273,12 +300,35 @@ class Mission extends Parse.Object {
       .first();
   }
 
+  static getWorkerActiveMissionQuery(
+    currentWorker: MWorker
+  ): Parse.Query<Mission> {
+    return new Parse.Query(Mission)
+      .equalTo('status', 'active')
+      .equalTo('base_workers', currentWorker);
+  }
+
+  static getMissionsForCivilian(civ: Patient): Promise<Array<Mission>> {
+    return new Parse.Query(Mission)
+      .equalTo('status', 'complete')
+      .equalTo('patients', civ)
+      .find();
+  }
+
+  static getCompletedMissionsForWorker(w: MWorker): Promise<Array<Mission>> {
+    return new Parse.Query(Mission)
+      .equalTo('status', 'complete')
+      .equalTo(
+        w.getRole() === 'base_worker' ? 'base_workers' : 'field_workers',
+        w
+      )
+      .find();
+  }
+
   static getWorkerActiveMission(
     currentWorker: MWorker
   ): Promise<Mission | null> {
-    return new Parse.Query(Mission)
-      .equalTo('status', 'active')
-      .equalTo('base_workers', currentWorker)
+    return this.getWorkerActiveMissionQuery(currentWorker)
       .find()
       .then((missions: Array<Mission>) => {
         console.log('active missions:', missions);
@@ -303,6 +353,10 @@ class Mission extends Parse.Object {
 
   addBaseWorker(worker: MWorker) {
     this.add('base_workers', worker);
+  }
+
+  removeBaseWorker(worker: MWorker) {
+    this.remove('base_workers', worker);
   }
 
   addFieldWorker(worker: MWorker) {
@@ -355,7 +409,6 @@ class Mission extends Parse.Object {
 
   formatPatientNames() {
     const patients = this.getPatients();
-    console.log('patients:', patients);
     if (patients.length === 1) {
       return patients[0].getFormattedName();
     }
@@ -363,6 +416,12 @@ class Mission extends Parse.Object {
       return 'Multiple Patients';
     }
     return 'No patients';
+  }
+
+  getQueryForPatients() {
+    const patients = this.getPatients();
+    const pIds = patients.map((p) => p.id);
+    return new Parse.Query(Patient).containedIn('objectId', pIds);
   }
 }
 
@@ -490,8 +549,8 @@ class MWorker extends Parse.Object {
 
 class API {
   static initAPI() {
-    // const apiUrl = 'https://apollo-frs-backend.herokuapp.com/parse'
-    const apiUrl = 'http://localhost:1337/parse';
+    const apiUrl = 'https://apollo-frs-backend.herokuapp.com/parse';
+    // const apiUrl = 'http://localhost:1337/parse';
     Parse.initialize('frsAppID');
     parse.serverURL = apiUrl;
 

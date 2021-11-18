@@ -1,0 +1,13 @@
+.patientInfo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.patientImage {
+  grid-row: span 5;
+  max-width: 20vw;
+}
+
+.patientData {
+  display: flex;
+}

@@ -29,8 +29,7 @@ export default function DeployMissionScreen() {
         })
         .then((w) => {
           const d = w.getDistrict();
-          const query = MWorker.getFieldWorkerQuery(d);
-          return query;
+          return MWorker.getFieldWorkerQuery(d);
         })
         .then(async (q) => {
           await q.find().then((workers) => setFieldWorkers(workers));
@@ -85,6 +84,7 @@ export default function DeployMissionScreen() {
         API.getWorkerForUser(user).then((w) => {
           currentMission.addBaseWorker(w);
           currentMission.setInitialDesc(initialInfo);
+          currentMission.setStatus('active');
           return currentMission.save();
         });
       }

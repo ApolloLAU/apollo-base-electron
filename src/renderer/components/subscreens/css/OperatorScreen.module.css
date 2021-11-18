@@ -1,0 +1,17 @@
+.operatorInfo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.operatorImage {
+  grid-row: span 5;
+}
+
+.operatorData {
+  display: flex;
+  align-items: center;
+}
+
+.profilePic {
+  width: 20vw;
+}

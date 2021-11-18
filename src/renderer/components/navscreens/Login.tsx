@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useHistory } from 'react-router';
-import icon from '../../../../assets/FRSLogo.png';
+import icon from '../../../../assets/apollo-full.png';
 import './css/Login.css';
 import { API } from '../../api/API';
 

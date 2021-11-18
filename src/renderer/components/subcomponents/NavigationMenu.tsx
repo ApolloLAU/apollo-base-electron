@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router';
-import { API } from '../../api/API';
+import Modal from 'react-modal';
+import { API, Mission } from '../../api/API';
 import './css/NavigationMenu.scss';
 
-import app_icon from '../../../../assets/FRSLogo.png';
+import app_icon from '../../../../assets/apollo.png';
 import ambulance from '../../../../assets/ambulance.png';
 import map from '../../../../assets/map.png';
 import records from '../../../../assets/medical-folder.png';
@@ -20,9 +21,28 @@ type NavigationMenuProps = {
 export default function NavigationMenu({ role }: NavigationMenuProps) {
   const history = useHistory();
   const loc = useLocation();
+  const [isActiveMissionModalOpen, setActiveMissionOpen] = useState(false);
+
+  const closeModal = () => {
+    setActiveMissionOpen(false);
+  };
+
   const logout = (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
-    API.logOut().then(() => history.push('/'));
+    const user = API.getLoggedInUser();
+    if (user) {
+      API.getWorkerForUser(user)
+        .then((worker) =>
+          worker ? Mission.getWorkerActiveMission(worker) : null
+        )
+        .then((currentMission) => {
+          if (currentMission !== null) {
+            setActiveMissionOpen(true);
+          } else {
+            API.logOut().then(() => history.push('/'));
+          }
+        });
+    }
   };
 
   const isCurrentLoc = (path: string) => loc.pathname.includes(path);
@@ -30,6 +50,13 @@ export default function NavigationMenu({ role }: NavigationMenuProps) {
   if (role === 'base_worker') {
     return (
       <div className="nav-menu">
+        <Modal isOpen={isActiveMissionModalOpen} onRequestClose={closeModal}>
+          <h1>Warning</h1>
+          <p>
+            You currently have an active mission. Please hand it off or complete
+            it before logging out.
+          </p>
+        </Modal>
         <img src={app_icon} alt="app-icon" className="logo" />
         <Link
           to="/main/mission"

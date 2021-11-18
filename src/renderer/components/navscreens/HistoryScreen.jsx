@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Mission } from 'renderer/api/API';
 import MissionCard from '../subcomponents/MissionCard';
+import { Mission } from '../../api/API';
 
 export default function HistoryScreen() {
   const [missions, setMissions] = useState([]);
