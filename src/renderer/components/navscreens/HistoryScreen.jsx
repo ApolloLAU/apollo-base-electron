@@ -27,7 +27,7 @@ export default function HistoryScreen() {
           <MissionCard
             missionID={m.id}
             missionDate={m.createdAt}
-            missionLocation="location"
+            missionLocation={m.getFormattedLocation()}
             patientName={
               listOfPatientLists[ind].length > 1
                 ? 'Multiple Patients'

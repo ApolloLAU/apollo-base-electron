@@ -212,15 +212,23 @@ export default function CurrentMissionScreen() {
     setFinalReport(e.target.value);
   }
 
-  const onCompleteMission = (e) => {
+  const onCompleteMission = async (e) => {
     e.preventDefault();
     if (newMissionStatus === 'complete') {
       currentMission.setFinalDesc(finalReport);
       currentMission.setStatus("complete");
       // ba3d fi shi?
+      for (const w of baseWorkers) {
+        w.setStatus('online');
+        await w.save()
+      }
+      for (const w of fieldWorkers) {
+        w.setStatus('online');
+        await w.save()
+      }
       currentMission.save().then(() => history.push('/main/history'));
     } else {
-      MWorker.getById(handOffWorker.value).then((newWorker) => {
+      await MWorker.getById(handOffWorker.value).then((newWorker) => {
         sendMessage(`Handing off mission from ${currentWorker.getFormattedName()} to ${newWorker.getFormattedName()}`)
         currentMission.addBaseWorker(newWorker);
         return currentMission.save();

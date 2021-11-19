@@ -11,7 +11,7 @@ export default function PatientModal({ patient, isModalOpen, onRequestClose }) {
         </div>
         <div>
           <p>Date of Birth</p>
-          <p>{patient.getDOB().toLocaleDateString()}</p>
+          <p>{patient.getDOB() ? patient.getDOB().toLocaleDateString() : "UNKNOWN"}</p>
         </div>
         <div>
           <p>Address</p>

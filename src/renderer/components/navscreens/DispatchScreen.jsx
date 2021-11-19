@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {MapContainer, Marker, TileLayer, useMapEvents} from 'react-leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import Modal from 'react-modal';
 import AsyncCreatableSelect from 'react-select/async-creatable';
-import {Parse} from 'parse';
+import { Parse } from 'parse';
 import L from 'leaflet';
-import {useHistory} from 'react-router';
+import { useHistory } from 'react-router';
 import styles from './css/DispatchScreen.module.css';
-import {API, Mission, Patient} from '../../api/API';
+import { API, Mission, Patient } from '../../api/API';
 import MissionCard from '../subcomponents/MissionCard';
 
 import redMarker from '../../../../assets/marker.png';
@@ -167,22 +167,21 @@ export default function DispatchScreen() {
     );
     m.setFormattedLocation(missionCreateOptions.formattedLocation);
 
-    // TODO: create OR link the patients
-    let unknownIndex = 0;
     missionCreateOptions.selectedPatients.forEach((p) => {
       if (p.__isNew__) {
         // the patient needs to be created.
         console.log('creating new patient');
-        const pName = p.label; // name of patient to be created.
+        const pName = p.label.split(' '); // name of patient to be created.
         const patient = Patient.createEmptyPatient();
-        // FIXME: set patient name (should we just split on last space?).
+        patient.setFirstName(pName[0]);
+        if (pName.length > 1) patient.setLastName(pName.slice(1).join(' '));
         m.addPatient(patient);
       } else if (p.label === unknownPatientName) {
         // the patient is unknown ==> link to john doe profile.
-        const patient = new Patient();
-        patient.id = `${unknownPatientName}${unknownIndex}`;
+        const patient = Patient.createEmptyPatient();
+        patient.setFirstName('Unknown');
+        patient.setLastName('Patient');
         m.addPatient(patient);
-        unknownIndex++;
       } else {
         // the patient already exists. link to patientId.
         const patient = new Patient();

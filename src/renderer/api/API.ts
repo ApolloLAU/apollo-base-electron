@@ -80,7 +80,7 @@ class Patient extends Parse.Object {
   }
 
   setLastName(name: string) {
-    this.set('first_name', name);
+    this.set('last_name', name);
   }
 
   getHomeAddress(): string {
