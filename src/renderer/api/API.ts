@@ -547,6 +547,48 @@ class MWorker extends Parse.Object {
   }
 }
 
+class SensorData extends Parse.Object {
+  constructor() {
+    super('SensorData');
+    this.set('ECG', []);
+    this.set('raw_ECG', []);
+    this.set('predicted_diseases', []);
+    this.set('rpeaks', []);
+    this.set('ybeats', []);
+    this.set('bpm', []);
+  }
+
+  setMission(mission: Mission) {
+    this.set('mission', mission)
+  }
+
+  setPatient(p: Patient) {
+    this.set('patient', p);
+  }
+
+  addRawECGValues(values: number[]) {
+    this.set('raw_ECG', values);
+  }
+
+  getCleanECGVals() {
+    return this.get('ECG');
+  }
+
+  getCurrentBPM() {
+    if (this.get('bpm').length > 0)
+      return this.get('bpm').at(-1);
+    return 0;
+  }
+
+  static getQueryForCurrentMission(mission: Mission, patient: Patient) {
+    return new Parse.Query(SensorData)
+      .equalTo('mission', mission)
+      .equalTo('patient', patient)
+      .ascending('createdAt');
+  }
+
+}
+
 class API {
   static initAPI() {
     const apiUrl = 'https://apollo-frs-backend.herokuapp.com/parse';
@@ -560,6 +602,7 @@ class API {
     Parse.Object.registerSubclass('MedicalData', MedicalDataPt);
     Parse.Object.registerSubclass('District', District);
     Parse.Object.registerSubclass('Patient', Patient);
+    Parse.Object.registerSubclass('SensorData', SensorData)
     console.log('API Initialized');
   }
 
@@ -592,4 +635,4 @@ class API {
   }
 }
 
-export { API, MWorker, Mission, ChatMessage, MedicalDataPt, District, Patient };
+export { API, MWorker, Mission, ChatMessage, MedicalDataPt, District, Patient, SensorData };

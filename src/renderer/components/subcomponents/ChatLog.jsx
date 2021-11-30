@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { ChatMessage } from 'renderer/api/API';
 
-type ChatLogProps = {
-  isActive: boolean;
-  messages: ChatMessage[];
-  onSend: React.MouseEventHandler<HTMLButtonElement>;
-  chatValue: string;
-  setChatValue: (arg0: string) => void;
-};
+import styles from './css/ChatLog.module.css';
 
-type ChatMessageProps = {
-  message: ChatMessage;
-};
+// type ChatLogProps = {
+//   isActive: boolean;
+//   messages: ChatMessage[];
+//   onSend: React.MouseEventHandler<HTMLButtonElement>;
+//   chatValue: string;
+//   setChatValue: (arg0: string) => void;
+// };
+//
+// type ChatMessageProps = {
+//   message: ChatMessage;
+// };
 
-function ChatMessageComponent({ message }: ChatMessageProps) {
+function ChatMessageComponent({ message }) {
   const [isSender, setIsSender] = useState(false);
   useEffect(() => {
     setIsSender(message.isSenderBase());
@@ -38,13 +39,13 @@ export default function ChatLog({
   onSend,
   chatValue,
   setChatValue,
-}: ChatLogProps) {
-  const onValChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+}) {
+  const onValChange = (evt) => {
     setChatValue(evt.target.value);
   };
   return (
     <div>
-      <div>
+      <div className={styles.messageList}>
         {messages.map((m, ind) => (
           <ChatMessageComponent message={m} key={ind} />
         ))}

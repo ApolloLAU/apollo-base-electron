@@ -10,7 +10,6 @@
 .sideBar {
   flex: 1 0;
   min-width: 20%;
-  height: 100%;
 }
 
 .upperArea {
@@ -68,4 +67,10 @@
   color: white;
   font-size: 20px;
   height: 3rem;
+}
+
+.graphStyle {
+  max-height: 75% !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }

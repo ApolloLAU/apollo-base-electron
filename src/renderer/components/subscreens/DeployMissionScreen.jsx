@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { API, Mission, MWorker } from '../../api/API';
 
 import styles from './css/DeployMission.module.css';
@@ -7,6 +8,7 @@ import SelectableWorkerCard from '../subcomponents/SelectableWorkerCard';
 
 export default function DeployMissionScreen() {
   const { id } = useParams();
+  const history = useHistory();
   const [currentMission, setCurrentMission] = useState(undefined);
   const [fieldWorkers, setFieldWorkers] = useState([]);
   const [subscription, setSubscription] = useState(undefined);
@@ -87,6 +89,7 @@ export default function DeployMissionScreen() {
           currentMission.setStatus('active');
           return currentMission.save();
         });
+        history.push('/main/mission');
       }
     }
   };
