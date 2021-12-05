@@ -31,7 +31,7 @@ export default function DispatchScreen() {
     open: false,
     latLng: {},
     formattedLocation: '',
-    selectedPatients: [],
+    selectedPatients: undefined,
   });
   const unknownPatientName = 'UNKNOWN'; // FIXME: do we want something else?
   const getMissionLoc = (m) => m.get('location');
@@ -77,7 +77,7 @@ export default function DispatchScreen() {
       ...missionCreateOptions,
       open: false,
       formattedLocation: '',
-      selectedPatients: [],
+      selectedPatients: undefined,
     });
   };
 
@@ -111,25 +111,47 @@ export default function DispatchScreen() {
       })
       .then((labels) => [
         ...labels,
-        { value: Math.random(), label: unknownPatientName },
+        { value: `${Math.random()}`, label: unknownPatientName },
       ]);
   // Promise.resolve([{ value: Math.random(), label: unknownPatientName }]); // TODO: promise that returns possible patients to add to mission.
   // const filterPatientList = (searchTerm) => []; // TODO: returns list of filtered patients for searching.
+  const filterPatientList = async (searchTerm) => {
+    return getPatientList()
+      .then((list) => {
+        const out = list.filter(
+          (o) =>
+            o.label === unknownPatientName ||
+            o.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            o.value.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        console.log(out);
+        return out;
+      })
+      .catch((err) => console.log(err));
+  };
 
   const onSelectPatient = (option) => {
-    const newOptions = option.map((o) => {
-      if (o.label === unknownPatientName) {
-        return { label: unknownPatientName, value: Math.random() };
-      }
-      return o;
-    });
+    let newOption;
+    if (option === null) {
+      setMissionCreateOptions({
+        ...missionCreateOptions,
+        selectedPatients: undefined,
+      });
+      return;
+    }
+    if (option.label === unknownPatientName) {
+      newOption = { label: unknownPatientName, value: Math.random() };
+    } else {
+      newOption = option;
+    }
+
     setMissionCreateOptions({
       ...missionCreateOptions,
-      selectedPatients: newOptions,
+      selectedPatients: newOption,
     });
   };
 
-  useEffect(() => {
+  const initializeMissionList = () => {
     const user = API.getLoggedInUser();
     API.getWorkerForUser(user)
       .then((worker) => {
@@ -154,6 +176,10 @@ export default function DispatchScreen() {
         // then can use the correct ones.
         setDeployableMissions(parseMissions);
       });
+  };
+
+  useEffect(() => {
+    initializeMissionList();
   }, []);
 
   const createMission = (e) => {
@@ -167,39 +193,39 @@ export default function DispatchScreen() {
     );
     m.setFormattedLocation(missionCreateOptions.formattedLocation);
 
-    missionCreateOptions.selectedPatients.forEach((p) => {
-      if (p.__isNew__) {
-        // the patient needs to be created.
-        console.log('creating new patient');
-        const pName = p.label.split(' '); // name of patient to be created.
-        const patient = Patient.createEmptyPatient();
-        patient.setFirstName(pName[0]);
-        if (pName.length > 1) patient.setLastName(pName.slice(1).join(' '));
-        m.addPatient(patient);
-      } else if (p.label === unknownPatientName) {
-        // the patient is unknown ==> link to john doe profile.
-        const patient = Patient.createEmptyPatient();
-        patient.setFirstName('Unknown');
-        patient.setLastName('Patient');
-        m.addPatient(patient);
-      } else {
-        // the patient already exists. link to patientId.
-        const patient = new Patient();
-        const patientId = p.value;
-        patient.id = patientId;
-        m.addPatient(patient);
-      }
-    });
+    const p = missionCreateOptions.selectedPatients;
+    if (p.__isNew__) {
+      // the patient needs to be created.
+      console.log('creating new patient');
+      const pName = p.label.split(' '); // name of patient to be created.
+      const patient = Patient.createEmptyPatient();
+      patient.setFirstName(pName[0]);
+      if (pName.length > 1) patient.setLastName(pName.slice(1).join(' '));
+      m.addPatient(patient);
+    } else if (p.label === unknownPatientName) {
+      // the patient is unknown ==> link to john doe profile.
+      const patient = Patient.createEmptyPatient();
+      patient.setFirstName('Unknown');
+      patient.setLastName('Patient');
+      m.addPatient(patient);
+    } else {
+      // the patient already exists. link to patientId.
+      const patient = new Patient();
+      const patientId = p.value;
+      patient.id = patientId;
+      m.addPatient(patient);
+    }
 
     console.log('saving mission', m);
-    m.save().then(() =>
+    m.save().then(() => {
       setMissionCreateOptions({
         ...missionCreateOptions,
         open: false,
         formattedLocation: '',
-        selectedPatients: [],
-      })
-    );
+        selectedPatients: undefined,
+      });
+      initializeMissionList();
+    });
   };
 
   const getMarkerForMission = (m) => {
@@ -224,11 +250,10 @@ export default function DispatchScreen() {
           <p>Location:&emsp;{getLocText()}</p>
           <p>Select Patients:</p>
           <AsyncCreatableSelect
-            isMulti
             cacheOptions
             backspaceRemovesValue
             isClearable
-            loadOptions={getPatientList}
+            loadOptions={filterPatientList}
             onChange={onSelectPatient}
             value={missionCreateOptions.selectedPatients}
           />

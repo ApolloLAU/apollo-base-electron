@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { API, Mission } from 'renderer/api/API';
+import * as Parse from 'parse';
 import AsyncSelect from 'react-select/async';
 import Modal from 'react-modal';
 import { useHistory } from 'react-router-dom';
-import {VictoryChart, VictoryContainer, VictoryLine} from 'victory';
+import {
+  VictoryChart,
+  VictoryZoomContainer,
+  VictoryLine,
+  VictoryTheme,
+} from 'victory';
 import ChatLog from '../subcomponents/ChatLog';
 
 import placeholder from '../../../../assets/empty-profile-picture.png';
@@ -259,9 +265,11 @@ export default function CurrentMissionScreen() {
     // addECGData()
   };
 
-  const onSendSpo2 = (e) => {
+  const reqML = async (e) => {
     e.preventDefault();
-    sendMessage('SpO2 Reading Requested');
+    const params = { ecg: sensorData.id };
+    const mlResult = await Parse.Cloud.run('predict', params);
+    console.log('ran ml. result:', mlResult);
   };
 
   const onSendBPM = (e) => {
@@ -481,9 +489,9 @@ export default function CurrentMissionScreen() {
               <button
                 className={styles.requestButton}
                 type="button"
-                onClick={onSendSpo2}
+                onClick={reqML}
               >
-                Request SpO2
+                Request ML Result
               </button>
               <button
                 className={styles.requestButton}
@@ -494,13 +502,31 @@ export default function CurrentMissionScreen() {
               </button>
             </div>
           </div>
+          <p>BPM: {sensorData ? sensorData.getCurrentBPM() : ''}</p>
+          <p>
+            BPM Prediction:{' '}
+            {sensorData && sensorData.get('predicted_diseases').length > 0
+              ? sensorData.get('predicted_diseases')[0]
+              : ''}
+          </p>
+          <p>
+            Disease Prediction:{' '}
+            {sensorData && sensorData.get('predicted_diseases').length > 0
+              ? sensorData.get('predicted_diseases')[1]
+              : ''}
+          </p>
           <VictoryChart
             height={250}
+            theme={VictoryTheme.material}
             containerComponent={
-              <VictoryContainer className={styles.graphStyle} />
+              <VictoryZoomContainer
+                className={styles.graphStyle}
+                minimumZoom={{ x: 0.01, y: 1 }}
+              />
             }
           >
             <VictoryLine
+              style={{ data: { stroke: '#c43a31' } }}
               data={sensorData ? sensorData.getCleanECGVals() : []}
             />
           </VictoryChart>
