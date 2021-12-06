@@ -188,12 +188,14 @@ export default function CurrentMissionScreen() {
       ecgSubscription.on('create', (obj) => {
         // a new ecg was created for this patient and saved to the db => plot that one instead
         // this is what will happen as soon as you call .save() for the first time.
+        console.log('create')
         setSensorData(obj);
       });
 
       ecgSubscription.on('enter', (obj) => {
         // a previous ecg was set to this patient (patient change)
         // only plot of this is the newest one.
+        console.log('entered')
         if (sensorData && sensorData.createdAt > obj.createdAt) {
           return; // already have a more recent one. do nothing
         }
@@ -205,6 +207,7 @@ export default function CurrentMissionScreen() {
         // if it is the one we are working with, we need it.
         if (sensorData && sensorData.id === obj.id) {
           // same one. update our state with new values!
+          console.log('update')
           setSensorData(obj);
         }
       });
