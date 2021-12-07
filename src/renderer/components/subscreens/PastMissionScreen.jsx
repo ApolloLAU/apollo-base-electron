@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { ChatMessage, MedicalDataPt, Mission } from 'renderer/api/API';
+import { ChatMessage, Mission } from 'renderer/api/API';
 import ChatLog from '../subcomponents/ChatLog';
 
 import './css/PastMission.css';
+import { SensorData } from '../../api/API';
+import styles from '../navscreens/css/CurrentMissionScreen.module.css';
+import placeholder from '../../../../assets/empty-profile-picture.png';
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryTheme,
+  VictoryZoomContainer,
+} from 'victory';
 
 export default function PastMissionScreen() {
   const { id } = useParams();
+  const [mission, setMission] = useState(undefined);
   const [patients, setPatients] = useState([]);
   const [baseWorkers, setBaseWorkers] = useState([]);
   const [fieldWorkers, setFieldWorkers] = useState([]);
@@ -26,8 +36,14 @@ export default function PastMissionScreen() {
       setPatients(m.getPatients());
       setBaseWorkers(m.getBaseWorkers());
       setFieldWorkers(m.getFieldWorkers());
-      setDataPoints(await MedicalDataPt.getMedicalDataForMission(id));
+      setDataPoints(
+        await SensorData.getQueryForCurrentMission(
+          m,
+          m.getPatients()[0]
+        ).first()
+      );
       setMessages(await ChatMessage.getMessagesForMissionId(id));
+      setMission(m);
     });
   }, []);
 
@@ -35,58 +51,100 @@ export default function PastMissionScreen() {
     return `${obj.getFormattedName()}`;
   };
   // we may have multiple patients, so print each.
-  return (
+  return mission ? (
     <div>
       <div>
         <h1>Mission {id}</h1>
-        <table>
-          <tr>
-            <th>Patients</th>
-            <td>
-              {patients.map((pa) => (
-                <p key={pa.id}>{getName(pa)}</p>
-              ))}
-            </td>
-          </tr>
-          <tr>
-            <th>Mission Status</th>
-            <td>COMPLETED</td>
-          </tr>
-          <tr>
-            <th>Base Workers</th>
-            <td>
-              {baseWorkers.map((w) => (
-                <img
-                  className="profile-pic"
-                  src={w.getImgURL()}
-                  key={w.id}
-                  alt="base-worker"
+        <div className={styles.missionArea}>
+          <div>
+            <div className={styles.upperArea}>
+              <div className={styles.innerAreaRow}>
+                <div className={styles.innerArea}>
+                  <label className={styles.label}>Patients</label>
+                  <p className={styles.details}>
+                    {patients.map((pa, index) => (
+                      <p className={styles.details} key={pa.id}>
+                        {pa.getFormattedName()}
+                      </p>
+                    ))}
+                  </p>
+                </div>
+                <div className={styles.innerArea}>
+                  <label className={styles.label}>Location</label>
+                  <p className={styles.details}>
+                    {mission.getFormattedLocation()}
+                  </p>
+                </div>
+                <div className={styles.innerArea}>
+                  <div>
+                    <label className={styles.label}>Mission Status</label>
+                    <p className={styles.details}>ONGOING</p>
+                  </div>
+                </div>
+                <div className={styles.innerArea}>
+                  <label className={styles.label}>Team on Mission</label>
+                  <div>
+                    {baseWorkers.map((w) => (
+                      <img
+                        className="profile-pic"
+                        src={w.getImgURL() || placeholder}
+                        key={w.id}
+                        alt="base-worker"
+                      />
+                    ))}
+                    {fieldWorkers.map((w) => (
+                      <img
+                        className="profile-pic"
+                        src={w.getImgURL() || placeholder}
+                        key={w.id}
+                        alt="field-worker"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>BPM: {dataPoints ? dataPoints.getCurrentBPM() : ''}</p>
+          <p>
+            BPM Prediction:{' '}
+            {dataPoints && dataPoints.get('predicted_diseases').length > 0
+              ? dataPoints.get('predicted_diseases')[0]
+              : ''}
+          </p>
+          <p>
+            Disease Prediction:{' '}
+            {dataPoints && dataPoints.get('predicted_diseases').length > 0
+              ? dataPoints.get('predicted_diseases')[1]
+              : ''}
+          </p>
+          <div className={styles.graphArea}>
+            <VictoryChart
+              domainPadding={{ x: 25 }}
+              padding={{ top: 50, bottom: 50, right: 0, left: 50 }}
+              height={250}
+              theme={VictoryTheme.material}
+              containerComponent={
+                <VictoryZoomContainer
+                  className={styles.graphStyle}
+                  minimumZoom={{ x: 0.01, y: 1 }}
                 />
-              ))}
-            </td>
-          </tr>
-          <tr>
-            <th>Field Workers</th>
-            <td>
-              {fieldWorkers.map((w) => (
-                <img
-                  className="profile-pic"
-                  src={w.getImgURL()}
-                  key={w.id}
-                  alt="field-worker"
-                />
-              ))}
-            </td>
-          </tr>
-        </table>
-        <div>
-          <h1>BOTTOM CONTENT!!!!</h1>
+              }
+            >
+              <VictoryLine
+                style={{ data: { stroke: '#c43a31' } }}
+                data={dataPoints ? dataPoints.getCleanECGVals() : []}
+              />
+            </VictoryChart>
+          </div>
+        </div>
+        <div className={styles.sideBar}>
           <ChatLog messages={messages} isActive={false} />
         </div>
       </div>
-      <div>
-        <h1>SIDE CONTENT</h1>
-      </div>
     </div>
+  ) : (
+    <></>
   );
 }

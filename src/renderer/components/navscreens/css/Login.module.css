@@ -9,11 +9,11 @@
   height: 100%;
 }
 
-.logo-login {
-  margin-bottom: 5em;
+.logoLogin {
+  margin: 5em;
 }
 
-#field {
+.loginField {
   font-size: 25px;
   margin-bottom: 10px;
   max-width: 500px;
@@ -21,7 +21,7 @@
   width: 100%;
 }
 
-.login-button {
+.loginButton {
   min-width: 500px;
   min-height: 50px;
   background-color: #550c18;

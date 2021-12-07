@@ -257,7 +257,7 @@ export default function DispatchScreen() {
             onChange={onSelectPatient}
             value={missionCreateOptions.selectedPatients}
           />
-          <button type="button" onClick={createMission}>
+          <button className={styles.dispatchButton} type="button" onClick={createMission}>
             Create Mission
           </button>
         </Modal>

@@ -3,6 +3,14 @@
   grid-template-columns: repeat(3, 1fr);
 }
 
+.dataLabel {
+  font-weight: 600;
+  color: #294C60;
+  margin-right: 0.3em;
+}
+
+
+
 .patientImage {
   grid-row: span 5;
   max-width: 20vw;

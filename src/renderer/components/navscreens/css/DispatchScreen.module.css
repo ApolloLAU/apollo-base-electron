@@ -25,3 +25,19 @@
   flex-direction: column;
 }
 
+.dispatchButton {
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 30px;
+  background-color: #550c18;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: 'Raleway', sans-serif;
+  padding: 0.5rem;
+}
+
+

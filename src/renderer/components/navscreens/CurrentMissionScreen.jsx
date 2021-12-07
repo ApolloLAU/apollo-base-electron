@@ -188,28 +188,22 @@ export default function CurrentMissionScreen() {
       ecgSubscription.on('create', (obj) => {
         // a new ecg was created for this patient and saved to the db => plot that one instead
         // this is what will happen as soon as you call .save() for the first time.
-        console.log('create')
+        console.log('create');
         setSensorData(obj);
       });
 
       ecgSubscription.on('enter', (obj) => {
         // a previous ecg was set to this patient (patient change)
         // only plot of this is the newest one.
-        console.log('entered')
-        if (sensorData && sensorData.createdAt > obj.createdAt) {
-          return; // already have a more recent one. do nothing
-        }
+        console.log('entered');
         setSensorData(obj);
       });
 
       ecgSubscription.on('update', (obj) => {
         // an existing ecg was updated (more values or a prediction occurred)
         // if it is the one we are working with, we need it.
-        if (sensorData && sensorData.id === obj.id) {
-          // same one. update our state with new values!
-          console.log('update')
-          setSensorData(obj);
-        }
+        console.log('update');
+        setSensorData(obj);
       });
     }
 
@@ -518,21 +512,25 @@ export default function CurrentMissionScreen() {
               ? sensorData.get('predicted_diseases')[1]
               : ''}
           </p>
-          <VictoryChart
-            height={250}
-            theme={VictoryTheme.material}
-            containerComponent={
-              <VictoryZoomContainer
-                className={styles.graphStyle}
-                minimumZoom={{ x: 0.01, y: 1 }}
+          <div className={styles.graphArea}>
+            <VictoryChart
+              domainPadding={{ x: 25 }}
+              padding={{ top: 50, bottom: 50, right: 0, left: 50 }}
+              height={250}
+              theme={VictoryTheme.material}
+              containerComponent={
+                <VictoryZoomContainer
+                  className={styles.graphStyle}
+                  minimumZoom={{ x: 0.01, y: 60000 }}
+                />
+              }
+            >
+              <VictoryLine
+                style={{ data: { stroke: '#c43a31' } }}
+                data={sensorData ? sensorData.getCleanECGVals() : []}
               />
-            }
-          >
-            <VictoryLine
-              style={{ data: { stroke: '#c43a31' } }}
-              data={sensorData ? sensorData.getCleanECGVals() : []}
-            />
-          </VictoryChart>
+            </VictoryChart>
+          </div>
         </div>
         <div className={styles.sideBar}>
           <ChatLog

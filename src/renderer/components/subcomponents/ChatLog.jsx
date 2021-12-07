@@ -20,15 +20,44 @@ function ChatMessageComponent({ message }) {
     setIsSender(message.isSenderBase());
   });
 
+  const date = message.createdAt;
+
+  const isToday = (someDate) => {
+    const today = new Date();
+    return (
+      someDate.getDate() === today.getDate() &&
+      someDate.getMonth() === today.getMonth() &&
+      someDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+
+  let formattedDate = '';
+  if (isToday(date)) {
+    formattedDate = `${date.getHours()}:${date.getMinutes()}`;
+  } else {
+    if (day < 10) {
+      day = `0${day}`;
+    }
+    if (month < 10) {
+      month = `0${month}`;
+    }
+
+    formattedDate = `${day}-${month}-${year}`;
+  }
+
   const imgUrl = message.getImage();
   return (
-    <div className={isSender ? 'sent-msg' : 'received-msg'}>
+    <div className={isSender ? styles.sentMessage : styles.receivedMessage}>
       {imgUrl !== null ? (
         <img src={imgUrl} alt="msg-pic" />
       ) : (
-        <p>{message.getMessage()}</p>
+        <p className={styles.messageText}>{message.getMessage()}</p>
       )}
-      <p>{message.createdAt.toLocaleString('en-GB')}</p>
+      <p className={styles.messageDate}>{formattedDate}</p>
     </div>
   );
 }
@@ -52,8 +81,8 @@ export default function ChatLog({
       </div>
       {isActive ? (
         <div>
-          <input type="text" value={chatValue} onChange={onValChange} />
-          <button type="submit" onClick={onSend}>
+          <input className={styles.chatInput} type="text" value={chatValue} onChange={onValChange} />
+          <button className={styles.sendButton} type="submit" onClick={onSend}>
             Send
           </button>
         </div>

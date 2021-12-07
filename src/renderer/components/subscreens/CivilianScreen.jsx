@@ -20,59 +20,55 @@ export default function CivilianScreen() {
 
   return civilian ? (
     <div>
+      <h1>Patient Personal Information</h1>
       <div className={styles.patientInfo}>
-        <div className={styles.patientImage}>IMAGE GOES HERE</div>
         <div className={styles.patientData}>
-          <p>First Name</p>
+          <p className={styles.dataLabel}>First Name: </p>
           <p>{civilian.getFirstName()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Last Name</p>
+          <p className={styles.dataLabel}>Last Name: </p>
           <p>{civilian.getLastName()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Date of Birth</p>
+          <p className={styles.dataLabel}>Date of Birth: </p>
           <p>{civilian.getDOB().toLocaleDateString()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Sex</p>
+          <p className={styles.dataLabel}>Sex:</p>
           <p>{civilian.getSex()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Address</p>
+          <p className={styles.dataLabel}>Address: </p>
           <p>{civilian.getHomeAddress()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Phone Number</p>
+          <p className={styles.dataLabel}>Phone Number:</p>
           <p>{civilian.getCellNbr()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Emergency Contact</p>
+          <p className={styles.dataLabel}>Emergency Contact: </p>
           <p>{civilian.getEmergencyNbr()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Blood Type</p>
+          <p className={styles.dataLabel}>Blood Type: </p>
           <p>{civilian.getBloodType()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Weight</p>
+          <p className={styles.dataLabel}>Weight: </p>
           <p>{civilian.getWeight()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Height</p>
+          <p className={styles.dataLabel}>Height: </p>
           <p>{civilian.getHeight()}</p>
         </div>
         <div className={styles.patientData}>
-          <p>Previous Heart Conditions</p>
-          <input
-            type="checkbox"
-            disabled
-            checked={civilian.getPrevConditions()}
-          />
+          <p className={styles.dataLabel}>Previous Heart Conditions: </p>
+          <p>{civilian.getPrevConditions() ? 'YES' : 'NO'}</p>
         </div>
       </div>
       <div>
-        Mission History
+        <h1>Mission History</h1>
         {missions.map((m) => (
           <MissionCard
             missionID={m.id}

@@ -1,5 +1,53 @@
 .messageList {
   height: 70vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
+}
+
+.sentMessage {
+  padding: 0.1em;
+  border-radius: 10px;
+  box-shadow: 1px 2px 5px gray;
+  text-align: right;
+  max-width: 60% !important;
+  margin-left: auto !important;
+  margin-right: 0.5em !important;
+  margin-bottom: 0.5em;
+  font-size: 1.1rem;
+}
+
+.messageText {
+  margin-bottom: 0 !important;
+  margin-top: 0.4rem;
+}
+
+.messageDate {
+ margin: 0 !important;
+}
+
+.receivedMessage {
+  padding: 0.1em;
+  color: white;
+  background-color: #550c18;
+  border-radius: 10px;
+  box-shadow: 1px 2px 5px gray;
+  max-width: 60% !important;
+  margin-bottom: 0.5em;
+  font-size: 1.1rem;
+}
+
+.chatInput {
+  height: 2rem;
+  font-size: 1.1rem;
+}
+
+.sendButton {
+  min-height: 25px;
+  background-color: #550c18;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: 'Raleway', sans-serif;
 }

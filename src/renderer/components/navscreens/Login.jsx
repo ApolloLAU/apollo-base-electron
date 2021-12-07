@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useHistory } from 'react-router';
 import icon from '../../../../assets/apollo-full.png';
-import './css/Login.css';
+import styles from './css/Login.module.css';
 import { API } from '../../api/API';
 
 export default function Login() {
@@ -11,15 +11,15 @@ export default function Login() {
   const [password, setPassword] = useState('test123');
   const [loginEnabled, setLoginEnabled] = useState(true);
 
-  const onEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onEmailChange = (event) => {
     setEmail(event.target.value);
   };
 
-  const onPassChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onPassChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const onClickLogin = (evt: FormEvent<HTMLFormElement>) => {
+  const onClickLogin = (evt) => {
     // todo: FRONTEND - show error if form not filled
     evt.preventDefault();
     console.log(email, password);
@@ -67,16 +67,25 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={onClickLogin} className="login">
-      <img width="294px" alt="icon" src={icon} className="logo-login" />
-      <input id="field" type="text" value={email} onChange={onEmailChange} />
+    <form onSubmit={onClickLogin} className={styles.login}>
+      <img width="294px" alt="icon" src={icon} className={styles.logoLogin} />
       <input
-        id="field"
+        className={styles.loginField}
+        type="text"
+        value={email}
+        onChange={onEmailChange}
+      />
+      <input
+        className={styles.loginField}
         type="password"
         value={password}
         onChange={onPassChange}
       />
-      <button className="login-button" type="submit" disabled={!loginEnabled}>
+      <button
+        className={styles.loginButton}
+        type="submit"
+        disabled={!loginEnabled}
+      >
         Log in
       </button>
     </form>

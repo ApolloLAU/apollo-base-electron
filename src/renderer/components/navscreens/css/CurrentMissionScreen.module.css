@@ -69,8 +69,13 @@
   height: 3rem;
 }
 
+.graphArea {
+  height: 40% !important;
+}
+
 .graphStyle {
-  max-height: 60% !important;
+  height: 100% !important;
+  width: 100% !important;
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
 }
